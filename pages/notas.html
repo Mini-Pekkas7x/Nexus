@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NEXUS — Notas</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+
+<body>
+
+    <div id="app">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <a href="../index.html">
+
+                    <img
+                        src="../assets/img/logo-nexus.png"
+                        alt="NEXUS"
+                    >
+
+                </a>
+
+            </div>
+
+
+            <nav class="menu">
+
+                <a href="../index.html" class="menu-item">
+                    🏠
+                    <span>Início</span>
+                </a>
+
+
+                <div class="menu-title">
+                    ORGANIZAÇÃO
+                </div>
+
+
+                <a
+                    href="./notas.html"
+                    class="menu-item active"
+                >
+                    📝
+                    <span>Notas</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    📅
+                    <span>Calendário</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    ⏰
+                    <span>Lembretes</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    📋
+                    <span>Listas</span>
+                </a>
+
+
+                <div class="menu-title">
+                    ESTUDOS
+                </div>
+
+
+                <a href="#" class="menu-item">
+                    📚
+                    <span>Estudos</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    📖
+                    <span>Resumos</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    📝
+                    <span>Provas & Trabalhos</span>
+                </a>
+
+
+                <div class="menu-title">
+                    PROJETOS
+                </div>
+
+
+                <a href="#" class="menu-item">
+                    💡
+                    <span>Ideias</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    🚀
+                    <span>Projetos</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    🔗
+                    <span>Links</span>
+                </a>
+
+
+                <div class="menu-title">
+                    PESSOAL
+                </div>
+
+
+                <a href="#" class="menu-item">
+                    🏆
+                    <span>Conquistas</span>
+                </a>
+
+
+                <a href="#" class="menu-item">
+                    💭
+                    <span>Diário</span>
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <a href="#" class="menu-item">
+                    ⚙️
+                    <span>Configurações</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <h1>NOTAS</h1>
+
+                <div class="topbar-actions">
+                    🔔
+                    ⚙️
+                </div>
+
+            </header>
+
+
+            <section class="content notes-page">
+
+                <div class="page-header">
+
+                    <div>
+
+                        <h2>Minhas notas</h2>
+
+                        <p>
+                            Organize suas ideias e informações.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button"
+                        id="new-note-button"
+                    >
+                        + Nova nota
+                    </button>
+
+                </div>
+
+
+                <div class="notes-toolbar">
+
+                    <input
+                        type="text"
+                        id="search-notes"
+                        placeholder="🔎 Pesquisar notas..."
+                    >
+
+
+                    <select id="filter-category">
+
+                        <option value="all">
+                            Todas as categorias
+                        </option>
+
+                        <option value="Programação">
+                            Programação
+                        </option>
+
+                        <option value="Estudos">
+                            Estudos
+                        </option>
+
+                        <option value="Ideias">
+                            Ideias
+                        </option>
+
+                        <option value="Pessoal">
+                            Pessoal
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    class="notes-grid"
+                    id="notes-container"
+                >
+
+                </div>
+
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL -->
+
+    <div
+        class="modal hidden"
+        id="note-modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3 id="modal-title">
+                    Nova nota
+                </h3>
+
+                <button
+                    id="close-modal"
+                    class="close-button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="note-form">
+
+                <input
+                    type="hidden"
+                    id="note-id"
+                >
+
+
+                <label for="note-title">
+                    Título
+                </label>
+
+                <input
+                    type="text"
+                    id="note-title"
+                    placeholder="Título da nota"
+                    required
+                >
+
+
+                <label for="note-category">
+                    Categoria
+                </label>
+
+                <select id="note-category">
+
+                    <option value="Programação">
+                        Programação
+                    </option>
+
+                    <option value="Estudos">
+                        Estudos
+                    </option>
+
+                    <option value="Ideias">
+                        Ideias
+                    </option>
+
+                    <option value="Pessoal">
+                        Pessoal
+                    </option>
+
+                </select>
+
+
+                <label for="note-content">
+                    Conteúdo
+                </label>
+
+                <textarea
+                    id="note-content"
+                    rows="8"
+                    placeholder="Escreva sua nota..."
+                    required
+                ></textarea>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="cancel-note"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Salvar nota
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script>
+    console.log("NOTAS HTML carregado");
+</script>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/notas.js"></script>
+
+</body>
+
+</html>
