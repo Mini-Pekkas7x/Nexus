@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NEXUS — Projetos</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div id="app">
+
+        <!-- ============================= -->
+        <!-- SIDEBAR -->
+        <!-- ============================= -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <a href="../index.html">
+
+                    <img
+                        src="../assets/img/logo-nexus.png"
+                        alt="NEXUS"
+                    >
+
+                </a>
+
+            </div>
+
+
+            <nav class="menu">
+
+                <a
+                    href="../index.html"
+                    class="menu-item"
+                >
+                    🏠
+                    <span>Início</span>
+                </a>
+
+
+                <div class="menu-title">
+                    ORGANIZAÇÃO
+                </div>
+
+
+                <a
+                    href="../pages/notas.html"
+                    class="menu-item"
+                >
+                    📝
+                    <span>Notas</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    📅
+                    <span>Calendário</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    ⏰
+                    <span>Lembretes</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    📋
+                    <span>Listas</span>
+                </a>
+
+
+                <div class="menu-title">
+                    ESTUDOS
+                </div>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    📚
+                    <span>Estudos</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    📖
+                    <span>Resumos</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    📝
+                    <span>Provas & Trabalhos</span>
+                </a>
+
+
+                <div class="menu-title">
+                    PROJETOS
+                </div>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    💡
+                    <span>Ideias</span>
+                </a>
+
+
+                <a
+                    href="../pages/projetos.html"
+                    class="menu-item active"
+                >
+                    🚀
+                    <span>Projetos</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    🔗
+                    <span>Links</span>
+                </a>
+
+
+                <div class="menu-title">
+                    PESSOAL
+                </div>
+
+
+                <a
+                    href="../pages/conquistas.html"
+                    class="menu-item"
+                >
+                    🏆
+                    <span>Conquistas</span>
+                </a>
+
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    💭
+                    <span>Diário</span>
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <a
+                    href="#"
+                    class="menu-item"
+                >
+                    ⚙️
+                    <span>Configurações</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ============================= -->
+        <!-- CONTEÚDO -->
+        <!-- ============================= -->
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <h1>PROJETOS</h1>
+
+
+                <div class="topbar-actions">
+
+                    <button>
+                        🔔
+                    </button>
+
+                    <button>
+                        ⚙️
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <section class="projects-page">
+
+                <!-- CABEÇALHO -->
+
+                <div class="page-header">
+
+                    <div>
+
+                        <h2>
+                            Meus projetos
+                        </h2>
+
+                        <p>
+                            Organize e acompanhe seus projetos.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button"
+                        id="new-project-button"
+                    >
+                        + Novo projeto
+                    </button>
+
+                </div>
+
+
+                <!-- FILTROS -->
+
+                <div class="projects-toolbar">
+
+                    <input
+                        type="text"
+                        id="search-projects"
+                        placeholder="🔎 Pesquisar projetos..."
+                    >
+
+
+                    <select id="filter-project-status">
+
+                        <option value="all">
+                            Todos os status
+                        </option>
+
+                        <option value="planning">
+                            📋 Planejamento
+                        </option>
+
+                        <option value="progress">
+                            🟡 Em andamento
+                        </option>
+
+                        <option value="completed">
+                            🟢 Concluído
+                        </option>
+
+                        <option value="paused">
+                            ⏸️ Pausado
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- PROJETOS -->
+
+                <div
+                    class="projects-grid"
+                    id="projects-container"
+                >
+
+                    <div class="project-empty">
+
+                        <div>
+                            🚀
+                        </div>
+
+                        <h3>
+                            Nenhum projeto ainda
+                        </h3>
+
+                        <p>
+                            Crie seu primeiro projeto para começar.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- MODAL NOVO PROJETO -->
+    <!-- ============================= -->
+
+    <div
+        class="modal hidden"
+        id="project-modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3 id="project-modal-title">
+                    Novo projeto
+                </h3>
+
+
+                <button
+                    id="close-project-modal"
+                    class="close-button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="project-form">
+
+                <input
+                    type="hidden"
+                    id="project-id"
+                >
+
+
+                <label for="project-title">
+                    Nome do projeto
+                </label>
+
+                <input
+                    type="text"
+                    id="project-title"
+                    placeholder="Ex: Meu novo site"
+                    required
+                >
+
+
+                <label for="project-status">
+                    Status
+                </label>
+
+                <select id="project-status">
+
+                    <option value="planning">
+                        📋 Planejamento
+                    </option>
+
+                    <option value="progress">
+                        🟡 Em andamento
+                    </option>
+
+                    <option value="completed">
+                        🟢 Concluído
+                    </option>
+
+                    <option value="paused">
+                        ⏸️ Pausado
+                    </option>
+
+                </select>
+
+
+                <label for="project-description">
+                    Descrição
+                </label>
+
+                <textarea
+                    id="project-description"
+                    rows="5"
+                    placeholder="Descreva seu projeto..."
+                    required
+                ></textarea>
+
+
+                <div class="project-dates">
+
+                    <div>
+
+                        <label for="project-start">
+                            Data de início
+                        </label>
+
+                        <input
+                            type="date"
+                            id="project-start"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="project-deadline">
+                            Prazo
+                        </label>
+
+                        <input
+                            type="date"
+                            id="project-deadline"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <label for="project-progress">
+                    Progresso
+                </label>
+
+                <div class="progress-input">
+
+                    <input
+                        type="range"
+                        id="project-progress"
+                        min="0"
+                        max="100"
+                        value="0"
+                    >
+
+                    <span id="progress-value">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="cancel-project"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Salvar projeto
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/projetos.js"></script>
+    
+</body>
+
+</html>

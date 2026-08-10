@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Aniversariantes — NEXUS</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/aniversariantes.css"
+    >
+
+</head>
+
+
+<body>
+
+<div id="app">
+
+
+    <!-- ============================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <img
+                src="../assets/img/logo-nexus.png"
+                alt="NEXUS"
+            >
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a
+                href="../index.html"
+                class="menu-item"
+            >
+                🏠
+                <span>Início</span>
+            </a>
+
+
+            <div class="menu-title">
+                ORGANIZAÇÃO
+            </div>
+
+
+            <a
+                href="./notas.html"
+                class="menu-item"
+            >
+                📝
+                <span>Notas</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                📅
+                <span>Calendário</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                ⏰
+                <span>Lembretes</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                📋
+                <span>Listas</span>
+            </a>
+
+
+            <div class="menu-title">
+                ESTUDOS
+            </div>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                📚
+                <span>Estudos</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                📖
+                <span>Resumos</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                📝
+                <span>Provas & Trabalhos</span>
+            </a>
+
+
+            <div class="menu-title">
+                PROJETOS
+            </div>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                💡
+                <span>Ideias</span>
+            </a>
+
+
+            <a
+                href="./projetos.html"
+                class="menu-item"
+            >
+                🚀
+                <span>Projetos</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                🔗
+                <span>Links</span>
+            </a>
+
+
+            <div class="menu-title">
+                PESSOAL
+            </div>
+
+
+            <a
+                href="./conquistas.html"
+                class="menu-item"
+            >
+                🏆
+                <span>Conquistas</span>
+            </a>
+
+
+            <!-- ANIVERSARIANTES -->
+
+            <a
+                href="./aniversariantes.html"
+                class="menu-item active"
+            >
+                🎂
+                <span>Aniversariantes</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                💭
+                <span>Diário</span>
+            </a>
+
+        </nav>
+
+
+        <!-- ============================= -->
+        <!-- PARTE INFERIOR -->
+        <!-- ============================= -->
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="#"
+                class="menu-item"
+            >
+                ⚙️
+                <span>Configurações</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ============================= -->
+    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- ============================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPO -->
+
+        <header class="topbar">
+
+            <h1>
+                Aniversariantes
+            </h1>
+
+
+            <div class="topbar-actions">
+
+                <button>
+                    🔔
+                </button>
+
+                <button>
+                    ⚙️
+                </button>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ============================= -->
+        <!-- ANIVERSARIANTES -->
+        <!-- ============================= -->
+
+        <section class="birthdays-page">
+
+
+            <!-- CABEÇALHO -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>
+                        🎂 Aniversariantes
+                    </h2>
+
+                    <p>
+                        Organize os aniversários das pessoas importantes para você.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="new-birthday-button"
+                    class="primary-button"
+                >
+                    + Adicionar aniversariante
+                </button>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- PRÓXIMO ANIVERSÁRIO -->
+            <!-- ============================= -->
+
+            <div class="next-birthday-card">
+
+                <div class="next-birthday-icon">
+                    🎂
+                </div>
+
+
+                <div>
+
+                    <span>
+                        PRÓXIMO ANIVERSÁRIO
+                    </span>
+
+                    <h3 id="next-birthday-name">
+                        Nenhum aniversariante
+                    </h3>
+
+                    <p id="next-birthday-date">
+                        Adicione alguém para começar.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- LISTA -->
+            <!-- ============================= -->
+
+            <div class="birthdays-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h3>
+                            👥 Seus aniversariantes
+                        </h3>
+
+                        <p>
+                            Pessoas cadastradas no NEXUS
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="birthdays-list"
+                    class="birthdays-grid"
+                >
+
+                    <div class="birthday-empty">
+
+                        <div>
+                            🎂
+                        </div>
+
+                        <h3>
+                            Nenhum aniversariante ainda
+                        </h3>
+
+                        <p>
+                            Adicione o primeiro aniversariante.
+                        </p>
+
+                        <button
+                            id="empty-add-birthday"
+                            class="primary-button"
+                        >
+                            + Adicionar aniversariante
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+<!-- ============================= -->
+<!-- MODAL — ANIVERSARIANTE -->
+<!-- ============================= -->
+
+<div
+    id="birthday-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-overlay"></div>
+
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="birthday-modal-title">
+                    Novo aniversariante
+                </h2>
+
+                <p>
+                    Adicione uma pessoa aos seus aniversariantes.
+                </p>
+
+            </div>
+
+
+            <button
+                id="close-birthday-modal"
+                class="modal-close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="birthday-form">
+
+            <!-- NOME -->
+
+            <div class="form-group">
+
+                <label for="birthday-name">
+                    Nome
+                </label>
+
+                <input
+                    type="text"
+                    id="birthday-name"
+                    placeholder="Ex: João"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DATA -->
+
+            <div class="form-group">
+
+                <label for="birthday-date">
+                    Data de nascimento
+                </label>
+
+                <input
+                    type="date"
+                    id="birthday-date"
+                    required
+                >
+
+            </div>
+
+
+            <!-- OBSERVAÇÃO -->
+
+            <div class="form-group">
+
+                <label for="birthday-note">
+                    Observação
+                    <span>(opcional)</span>
+                </label>
+
+                <textarea
+                    id="birthday-note"
+                    rows="4"
+                    placeholder="Ex: Gosta de jogos, é meu amigo..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- BOTÕES -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancel-birthday"
+                    class="secondary-button"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Salvar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<!-- ============================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================= -->
+
+<script src="../js/storage.js"></script>
+
+<script src="../js/aniversariantes.js"></script>
+
+
+</body>
+
+</html>

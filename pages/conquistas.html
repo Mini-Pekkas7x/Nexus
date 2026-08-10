@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>NEXUS — Notas</title>
+    <title>NEXUS — Conquistas</title>
 
     <link rel="stylesheet" href="../css/style.css">
 
@@ -39,7 +39,10 @@
 
             <nav class="menu">
 
-                <a href="../index.html" class="menu-item">
+                <a
+                    href="../index.html"
+                    class="menu-item"
+                >
                     🏠
                     <span>Início</span>
                 </a>
@@ -52,26 +55,35 @@
 
                 <a
                     href="../pages/notas.html"
-                    class="menu-item active"
+                    class="menu-item"
                 >
                     📝
                     <span>Notas</span>
                 </a>
 
 
-                <a href="#" class="menu-item">
+                <a
+                    href="#"
+                    class="menu-item"
+                >
                     📅
                     <span>Calendário</span>
                 </a>
 
 
-                <a href="#" class="menu-item">
+                <a
+                    href="#"
+                    class="menu-item"
+                >
                     ⏰
                     <span>Lembretes</span>
                 </a>
 
 
-                <a href="#" class="menu-item">
+                <a
+                    href="#"
+                    class="menu-item"
+                >
                     📋
                     <span>Listas</span>
                 </a>
@@ -128,7 +140,10 @@
                 </div>
 
 
-                <a href="../pages/conquistas.html" class="menu-item">
+                <a
+                    href="../pages/conquistas.html"
+                    class="menu-item active"
+                >
                     🏆
                     <span>Conquistas</span>
                 </a>
@@ -158,26 +173,36 @@
 
             <header class="topbar">
 
-                <h1>NOTAS</h1>
+                <h1>CONQUISTAS</h1>
+
 
                 <div class="topbar-actions">
-                    🔔
-                    ⚙️
+
+                    <button>
+                        🔔
+                    </button>
+
+                    <button>
+                        ⚙️
+                    </button>
+
                 </div>
 
             </header>
 
 
-            <section class="content notes-page">
+            <section class="achievements-page">
 
                 <div class="page-header">
 
                     <div>
 
-                        <h2>Minhas notas</h2>
+                        <h2>
+                            Minhas conquistas
+                        </h2>
 
                         <p>
-                            Organize suas ideias e informações.
+                            Registre seus momentos importantes.
                         </p>
 
                     </div>
@@ -185,43 +210,43 @@
 
                     <button
                         class="primary-button"
-                        id="new-note-button"
+                        id="new-achievement-button"
                     >
-                        + Nova nota
+                        + Nova conquista
                     </button>
 
                 </div>
 
 
-                <div class="notes-toolbar">
+                <div class="achievements-toolbar">
 
                     <input
                         type="text"
-                        id="search-notes"
-                        placeholder="🔎 Pesquisar notas..."
+                        id="search-achievements"
+                        placeholder="🔎 Pesquisar conquistas..."
                     >
 
 
-                    <select id="filter-category">
+                    <select id="filter-achievement-category">
 
                         <option value="all">
                             Todas as categorias
-                        </option>
-
-                        <option value="Programação">
-                            Programação
                         </option>
 
                         <option value="Estudos">
                             Estudos
                         </option>
 
-                        <option value="Ideias">
-                            Ideias
+                        <option value="Projetos">
+                            Projetos
                         </option>
 
                         <option value="Pessoal">
                             Pessoal
+                        </option>
+
+                        <option value="Outros">
+                            Outros
                         </option>
 
                     </select>
@@ -230,12 +255,27 @@
 
 
                 <div
-                    class="notes-grid"
-                    id="notes-container"
+                    class="achievements-grid"
+                    id="achievements-container"
                 >
 
-                </div>
+                    <div class="achievement-empty">
 
+                        <div>
+                            🏆
+                        </div>
+
+                        <h3>
+                            Nenhuma conquista ainda
+                        </h3>
+
+                        <p>
+                            Registre sua primeira conquista.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </section>
 
@@ -244,23 +284,26 @@
     </div>
 
 
+    <!-- ============================= -->
     <!-- MODAL -->
+    <!-- ============================= -->
 
     <div
         class="modal hidden"
-        id="note-modal"
+        id="achievement-modal"
     >
 
         <div class="modal-content">
 
             <div class="modal-header">
 
-                <h3 id="modal-title">
-                    Nova nota
+                <h3 id="achievement-modal-title">
+                    Nova conquista
                 </h3>
 
+
                 <button
-                    id="close-modal"
+                    id="close-achievement-modal"
                     class="close-button"
                 >
                     ×
@@ -269,59 +312,70 @@
             </div>
 
 
-            <form id="note-form">
+            <form id="achievement-form">
 
                 <input
                     type="hidden"
-                    id="note-id"
+                    id="achievement-id"
                 >
 
 
-                <label for="note-title">
+                <label for="achievement-title">
                     Título
                 </label>
 
                 <input
                     type="text"
-                    id="note-title"
-                    placeholder="Título da nota"
+                    id="achievement-title"
+                    placeholder="Ex: Primeiro projeto concluído"
                     required
                 >
 
 
-                <label for="note-category">
+                <label for="achievement-category">
                     Categoria
                 </label>
 
-                <select id="note-category">
-
-                    <option value="Programação">
-                        Programação
-                    </option>
+                <select id="achievement-category">
 
                     <option value="Estudos">
                         Estudos
                     </option>
 
-                    <option value="Ideias">
-                        Ideias
+                    <option value="Projetos">
+                        Projetos
                     </option>
 
                     <option value="Pessoal">
                         Pessoal
                     </option>
 
+                    <option value="Outros">
+                        Outros
+                    </option>
+
                 </select>
 
 
-                <label for="note-content">
-                    Conteúdo
+                <label for="achievement-date">
+                    Data
+                </label>
+
+                <input
+                    type="date"
+                    id="achievement-date"
+                    required
+                >
+
+
+                <label for="achievement-description">
+                    Descrição
                 </label>
 
                 <textarea
-                    id="note-content"
-                    rows="8"
-                    placeholder="Escreva sua nota..."
+                    id="achievement-description"
+                    rows="6"
+                    placeholder="Conte um pouco sobre essa conquista..."
                     required
                 ></textarea>
 
@@ -331,7 +385,7 @@
                     <button
                         type="button"
                         class="secondary-button"
-                        id="cancel-note"
+                        id="cancel-achievement"
                     >
                         Cancelar
                     </button>
@@ -341,7 +395,7 @@
                         type="submit"
                         class="primary-button"
                     >
-                        Salvar nota
+                        Salvar conquista
                     </button>
 
                 </div>
@@ -352,12 +406,11 @@
 
     </div>
 
-    <script>
-    console.log("NOTAS HTML carregado");
-</script>
 
     <script src="../js/storage.js"></script>
-    <script src="../js/notas.js"></script>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/conquistas.js"></script>
 
 </body>
 

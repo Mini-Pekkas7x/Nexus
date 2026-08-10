@@ -540,3 +540,29 @@ filterCategory.addEventListener(
 // =============================
 
 renderNotes();  
+
+// =============================
+// ABRIR MODAL PELO DASHBOARD
+// =============================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+if (params.get("novo") === "true") {
+
+    const newNoteButton =
+        document.getElementById(
+            "new-note-button"
+        );
+
+
+    if (newNoteButton) {
+
+        newNoteButton.click();
+
+    }
+
+}
