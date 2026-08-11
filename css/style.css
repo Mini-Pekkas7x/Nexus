@@ -2200,46 +2200,59 @@ a {
 RESPONSIVIDADE — CELULAR
 ========================================================= */
 
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+========================================================= */
+
 @media (max-width: 600px) {
 
     /* APP */
-
     #app {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
     }
 
 
     /* SIDEBAR */
-
     .sidebar {
         width: 100%;
-        min-width: 0;
+        min-width: 100%;
+        height: auto;
         min-height: auto;
 
         padding: 15px;
+
+        display: flex;
+        flex-direction: column;
 
         border-right: none;
         border-bottom: 1px solid rgba(168, 85, 247, 0.2);
     }
 
+
+    /* LOGO */
     .logo {
+        width: 100%;
+        justify-content: center;
         margin-bottom: 15px;
     }
 
     .logo img {
         width: 140px;
+        max-width: 100%;
+        height: auto;
     }
 
 
     /* MENU */
-
     .menu {
+        width: 100%;
+
         display: grid;
 
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
 
         gap: 6px;
     }
@@ -2249,9 +2262,14 @@ RESPONSIVIDADE — CELULAR
 
         margin-top: 12px;
         margin-bottom: 4px;
+
+        padding-left: 8px;
     }
 
     .menu-item {
+        width: 100%;
+        min-width: 0;
+
         padding: 10px;
 
         font-size: 12px;
@@ -2259,22 +2277,37 @@ RESPONSIVIDADE — CELULAR
         gap: 8px;
     }
 
+
+    /* PARTE INFERIOR DA SIDEBAR */
     .sidebar-bottom {
+        width: 100%;
         margin-top: 15px;
     }
 
+    .sidebar-bottom .menu-item {
+        width: 100%;
+    }
 
-    /* CONTEÚDO PRINCIPAL */
+
+    /* =====================================================
+       CONTEÚDO PRINCIPAL
+    ===================================================== */
 
     .main-content {
         width: 100%;
         min-width: 0;
+        max-width: 100%;
+
+        display: block;
     }
 
 
-    /* TOPBAR */
+    /* =====================================================
+       TOPBAR
+    ===================================================== */
 
     .topbar {
+        width: 100%;
         height: 60px;
 
         padding: 0 15px;
@@ -2282,7 +2315,6 @@ RESPONSIVIDADE — CELULAR
 
     .topbar h1 {
         font-size: 15px;
-
         letter-spacing: 2px;
     }
 
@@ -2292,21 +2324,31 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* CONTEÚDO */
+    /* =====================================================
+       CONTEÚDO
+    ===================================================== */
 
     .content {
+        width: 100%;
         padding: 15px;
     }
 
 
-    /* DASHBOARD */
+    /* =====================================================
+       DASHBOARD
+    ===================================================== */
 
     .dashboard {
+        width: 100%;
         padding: 15px;
     }
 
     .welcome {
+        flex-direction: column;
+        align-items: flex-start;
+
         margin-bottom: 20px;
+        gap: 15px;
     }
 
     .welcome h2 {
@@ -2323,17 +2365,21 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* ESTATÍSTICAS */
+    /* =====================================================
+       ESTATÍSTICAS
+    ===================================================== */
 
     .stats-grid {
+        width: 100%;
+
         grid-template-columns: 1fr;
 
         gap: 10px;
     }
 
     .stat-card {
+        width: 100%;
         padding: 15px;
-
         gap: 14px;
     }
 
@@ -2349,26 +2395,34 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* DASHBOARD GRID */
+    /* =====================================================
+       DASHBOARD GRID
+    ===================================================== */
 
     .dashboard-grid {
+        width: 100%;
+
         grid-template-columns: 1fr;
 
         gap: 15px;
     }
 
     .dashboard-card {
+        width: 100%;
         min-height: auto;
 
         padding: 16px;
     }
 
 
-    /* ACESSO RÁPIDO */
+    /* =====================================================
+       ACESSO RÁPIDO
+    ===================================================== */
 
     .quick-access {
-        flex-direction: column;
+        width: 100%;
 
+        flex-direction: column;
         align-items: stretch;
 
         padding: 17px;
@@ -2391,11 +2445,14 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* CABEÇALHO DAS PÁGINAS */
+    /* =====================================================
+       CABEÇALHO DAS PÁGINAS
+    ===================================================== */
 
     .page-header {
-        flex-direction: column;
+        width: 100%;
 
+        flex-direction: column;
         align-items: stretch;
 
         gap: 15px;
@@ -2416,21 +2473,30 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* PÁGINAS */
+    /* =====================================================
+       PÁGINAS
+    ===================================================== */
 
     .notes-page,
     .achievements-page,
     .projects-page,
     .birthdays-page {
+        width: 100%;
+        max-width: 100%;
+
         padding: 15px;
     }
 
 
-    /* BARRAS DE PESQUISA */
+    /* =====================================================
+       BARRAS DE PESQUISA
+    ===================================================== */
 
     .notes-toolbar,
     .achievements-toolbar,
     .projects-toolbar {
+        width: 100%;
+
         flex-direction: column;
 
         gap: 8px;
@@ -2443,35 +2509,43 @@ RESPONSIVIDADE — CELULAR
     .projects-toolbar input,
     .projects-toolbar select {
         width: 100%;
-
         min-width: 0;
     }
 
 
-    /* GRIDS */
+    /* =====================================================
+       GRIDS
+    ===================================================== */
 
     .notes-grid,
     .achievements-grid,
     .projects-grid,
     .birthdays-grid {
+        width: 100%;
+
         grid-template-columns: 1fr;
 
         gap: 12px;
     }
 
 
-    /* CARDS */
+    /* =====================================================
+       CARDS
+    ===================================================== */
 
     .note-card,
     .achievement-card,
     .project-card {
-        padding: 17px;
-
+        width: 100%;
         min-width: 0;
+
+        padding: 17px;
     }
 
 
-    /* NOTAS */
+    /* =====================================================
+       NOTAS
+    ===================================================== */
 
     .note-card-header h3 {
         font-size: 16px;
@@ -2484,7 +2558,9 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* PROJETOS */
+    /* =====================================================
+       PROJETOS
+    ===================================================== */
 
     .project-card h3 {
         font-size: 17px;
@@ -2497,7 +2573,9 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* ANIVERSÁRIO */
+    /* =====================================================
+       ANIVERSÁRIOS
+    ===================================================== */
 
     .next-birthday-card {
         align-items: flex-start;
@@ -2521,7 +2599,9 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* BOTÕES */
+    /* =====================================================
+       BOTÕES
+    ===================================================== */
 
     .primary-button,
     .secondary-button {
@@ -2529,7 +2609,9 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* MODAL */
+    /* =====================================================
+       MODAL
+    ===================================================== */
 
     .modal {
         padding: 10px;
@@ -2537,7 +2619,6 @@ RESPONSIVIDADE — CELULAR
 
     .modal-content {
         width: 100%;
-
         max-width: none;
 
         max-height: 95vh;
@@ -2569,7 +2650,9 @@ RESPONSIVIDADE — CELULAR
     }
 
 
-    /* FORMULÁRIOS */
+    /* =====================================================
+       FORMULÁRIOS
+    ===================================================== */
 
     .modal-content input,
     .modal-content select,
