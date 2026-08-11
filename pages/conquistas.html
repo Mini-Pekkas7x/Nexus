@@ -5,10 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NEXUS — Conquistas</title>
 
@@ -27,10 +24,7 @@
 
                 <a href="../index.html">
 
-                    <img
-                        src="../assets/img/logo-nexus.png"
-                        alt="NEXUS"
-                    >
+                    <img src="../assets/img/logo-nexus.png" alt="NEXUS">
 
                 </a>
 
@@ -39,10 +33,7 @@
 
             <nav class="menu">
 
-                <a
-                    href="../index.html"
-                    class="menu-item"
-                >
+                <a href="../index.html" class="menu-item">
                     🏠
                     <span>Início</span>
                 </a>
@@ -53,37 +44,29 @@
                 </div>
 
 
-                <a
-                    href="../pages/notas.html"
-                    class="menu-item"
-                >
+                <a href="../pages/notas.html" class="menu-item">
                     📝
                     <span>Notas</span>
                 </a>
 
+                <a href="./aniversariantes.html" class="menu-item">
+                    🎂
+                    <span>Aniversariantes</span>
+                </a>
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📅
                     <span>Calendário</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     ⏰
                     <span>Lembretes</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📋
                     <span>Listas</span>
                 </a>
@@ -140,10 +123,7 @@
                 </div>
 
 
-                <a
-                    href="../pages/conquistas.html"
-                    class="menu-item active"
-                >
+                <a href="../pages/conquistas.html" class="menu-item active">
                     🏆
                     <span>Conquistas</span>
                 </a>
@@ -208,10 +188,7 @@
                     </div>
 
 
-                    <button
-                        class="primary-button"
-                        id="new-achievement-button"
-                    >
+                    <button class="primary-button" id="new-achievement-button">
                         + Nova conquista
                     </button>
 
@@ -220,11 +197,7 @@
 
                 <div class="achievements-toolbar">
 
-                    <input
-                        type="text"
-                        id="search-achievements"
-                        placeholder="🔎 Pesquisar conquistas..."
-                    >
+                    <input type="text" id="search-achievements" placeholder="🔎 Pesquisar conquistas...">
 
 
                     <select id="filter-achievement-category">
@@ -254,10 +227,7 @@
                 </div>
 
 
-                <div
-                    class="achievements-grid"
-                    id="achievements-container"
-                >
+                <div class="achievements-grid" id="achievements-container">
 
                     <div class="achievement-empty">
 
@@ -288,10 +258,7 @@
     <!-- MODAL -->
     <!-- ============================= -->
 
-    <div
-        class="modal hidden"
-        id="achievement-modal"
-    >
+    <div class="modal hidden" id="achievement-modal">
 
         <div class="modal-content">
 
@@ -302,10 +269,7 @@
                 </h3>
 
 
-                <button
-                    id="close-achievement-modal"
-                    class="close-button"
-                >
+                <button id="close-achievement-modal" class="close-button">
                     ×
                 </button>
 
@@ -314,22 +278,14 @@
 
             <form id="achievement-form">
 
-                <input
-                    type="hidden"
-                    id="achievement-id"
-                >
+                <input type="hidden" id="achievement-id">
 
 
                 <label for="achievement-title">
                     Título
                 </label>
 
-                <input
-                    type="text"
-                    id="achievement-title"
-                    placeholder="Ex: Primeiro projeto concluído"
-                    required
-                >
+                <input type="text" id="achievement-title" placeholder="Ex: Primeiro projeto concluído" required>
 
 
                 <label for="achievement-category">
@@ -361,40 +317,25 @@
                     Data
                 </label>
 
-                <input
-                    type="date"
-                    id="achievement-date"
-                    required
-                >
+                <input type="date" id="achievement-date" required>
 
 
                 <label for="achievement-description">
                     Descrição
                 </label>
 
-                <textarea
-                    id="achievement-description"
-                    rows="6"
-                    placeholder="Conte um pouco sobre essa conquista..."
-                    required
-                ></textarea>
+                <textarea id="achievement-description" rows="6" placeholder="Conte um pouco sobre essa conquista..."
+                    required></textarea>
 
 
                 <div class="modal-actions">
 
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="cancel-achievement"
-                    >
+                    <button type="button" class="secondary-button" id="cancel-achievement">
                         Cancelar
                     </button>
 
 
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
+                    <button type="submit" class="primary-button">
                         Salvar conquista
                     </button>
 

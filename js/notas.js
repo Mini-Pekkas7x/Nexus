@@ -1,9 +1,14 @@
 console.log("NEXUS — Notas iniciado!");
 
+// ======================================================
+// CONFIGURAÇÃO DA API
+// ======================================================
 
-// =============================
+const API_URL = "http://localhost:3000/api/notas";
+
+// ======================================================
 // ELEMENTOS
-// =============================
+// ======================================================
 
 const newNoteButton =
     document.getElementById("new-note-button");
@@ -29,231 +34,440 @@ const searchNotes =
 const filterCategory =
     document.getElementById("filter-category");
 
-// =============================
+// ======================================================
 // DADOS
-// =============================
+// ======================================================
 
-let notes = NexusStorage.buscar("notas");
+let notes = [];
 
-
-// =============================
+// ======================================================
 // ABRIR MODAL
-// =============================
+// ======================================================
 
-newNoteButton.addEventListener("click", function () {
+if (newNoteButton) {
 
-    document.getElementById("modal-title").textContent =
-        "Nova nota";
+    newNoteButton.addEventListener("click", function () {
 
-    noteForm.reset();
+        document.getElementById("modal-title").textContent =
+            "Nova nota";
 
-    document.getElementById("note-id").value = "";
+        noteForm.reset();
 
-    modal.classList.remove("hidden");
+        document.getElementById("note-id").value = "";
 
-});
-
-
-// =============================
-// FECHAR MODAL
-// =============================
-
-closeModal.addEventListener("click", function () {
-
-    modal.classList.add("hidden");
-
-});
-
-
-cancelNote.addEventListener("click", function () {
-
-    modal.classList.add("hidden");
-
-});
-
-
-// =============================
-// SALVAR NOTA
-// =============================
-
-noteForm.addEventListener("submit", function (event) {
-
-    event.preventDefault();
-
-
-    const id =
-        document.getElementById("note-id").value;
-
-    const title =
-        document.getElementById("note-title").value.trim();
-
-    const category =
-        document.getElementById("note-category").value;
-
-    const content =
-        document.getElementById("note-content").value.trim();
-
-
-    if (!title || !content) {
-
-        alert("Preencha o título e o conteúdo.");
-
-        return;
-
-    }
-
-
-    // =============================
-    // EDITAR NOTA EXISTENTE
-    // =============================
-
-    if (id) {
-
-        const note =
-            notes.find(function (note) {
-
-                return note.id === id;
-
-            });
-
-
-        if (note) {
-
-            note.title = title;
-
-            note.category = category;
-
-            note.content = content;
-
-            note.updatedAt =
-                new Date().toISOString();
-
-        }
-
-    }
-
-
-    // =============================
-    // CRIAR NOVA NOTA
-    // =============================
-
-    else {
-
-        const newNote = {
-
-            id: crypto.randomUUID(),
-
-            title: title,
-
-            category: category,
-
-            content: content,
-
-            favorite: false,
-
-            pinned: false,
-
-            createdAt:
-                new Date().toISOString(),
-
-            updatedAt:
-                new Date().toISOString()
-
-        };
-
-
-        notes.unshift(newNote);
-
-    }
-
-
-    // =============================
-    // SALVAR
-    // =============================
-
-    NexusStorage.salvar(
-        "notas",
-        notes
-    );
-
-
-    noteForm.reset();
-
-    document.getElementById("note-id").value = "";
-
-    modal.classList.add("hidden");
-
-
-    renderNotes();
-
-});
-
-
-// =============================
-// MOSTRAR NOTAS
-// =============================
-
-function renderNotes() {
-
-    const search =
-        searchNotes.value
-            .toLowerCase()
-            .trim();
-
-    const category =
-        filterCategory.value;
-
-
-    let filteredNotes = notes.filter(function (note) {
-
-        const matchesSearch =
-            note.title
-                .toLowerCase()
-                .includes(search)
-            ||
-            note.content
-                .toLowerCase()
-                .includes(search);
-
-
-        const matchesCategory =
-            category === "all"
-            ||
-            note.category === category;
-
-
-        return matchesSearch && matchesCategory;
+        modal.classList.remove("hidden");
 
     });
 
-    filteredNotes.sort(function (a, b) {
+}
 
-    // 1. Notas fixadas primeiro
-    if (a.pinned !== b.pinned) {
-        return b.pinned - a.pinned;
+// ======================================================
+// FECHAR MODAL
+// ======================================================
+
+if (closeModal) {
+
+    closeModal.addEventListener("click", function () {
+
+        modal.classList.add("hidden");
+
+    });
+
+}
+
+if (cancelNote) {
+
+    cancelNote.addEventListener("click", function () {
+
+        modal.classList.add("hidden");
+
+    });
+
+}
+
+// ======================================================
+// CARREGAR NOTAS DA API
+// ======================================================
+
+async function loadNotes() {
+
+    try {
+
+        console.log("📡 Buscando notas...");
+
+        const response = await fetch(API_URL);
+
+        const result = await response.json();
+
+        console.log("📥 Resposta da API:", result);
+
+        if (!response.ok || !result.sucesso) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao carregar notas."
+            );
+
+        }
+
+        notes = result.notas || [];
+
+        console.log("✅ Notas carregadas:", notes);
+
+        renderNotes();
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erro ao carregar notas:",
+            error
+        );
+
+        notesContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Não foi possível carregar as notas
+                </h3>
+
+                <p>
+                    Verifique se o backend do NEXUS está funcionando.
+                </p>
+
+            </div>
+
+        `;
+
     }
 
+}
 
-    // 2. Favoritas depois
-    if (a.favorite !== b.favorite) {
-        return b.favorite - a.favorite;
+// ======================================================
+// SALVAR / EDITAR NOTA
+// ======================================================
+
+if (noteForm) {
+
+    noteForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const id =
+                document.getElementById("note-id").value;
+
+            const title =
+                document
+                    .getElementById("note-title")
+                    .value
+                    .trim();
+
+            const category =
+                document
+                    .getElementById("note-category")
+                    .value;
+
+            const content =
+                document
+                    .getElementById("note-content")
+                    .value
+                    .trim();
+
+            // ==================================================
+            // VALIDAÇÃO
+            // ==================================================
+
+            if (!title || !content) {
+
+                alert(
+                    "Preencha o título e o conteúdo."
+                );
+
+                return;
+
+            }
+
+            try {
+
+                let response;
+
+                // ==================================================
+                // EDITAR NOTA
+                // ==================================================
+
+                if (id) {
+
+                    console.log(
+                        "✏️ Editando nota:",
+                        id
+                    );
+
+                    response = await fetch(
+                        `${API_URL}/${id}`,
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                title: title,
+
+                                category: category,
+
+                                content: content
+
+                            })
+
+                        }
+                    );
+
+                }
+
+                // ==================================================
+                // CRIAR NOTA
+                // ==================================================
+
+                else {
+
+                    console.log(
+                        "📝 Criando nova nota..."
+                    );
+
+                    response = await fetch(
+                        API_URL,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                title: title,
+
+                                category: category,
+
+                                content: content,
+
+                                favorite: false,
+
+                                pinned: false
+
+                            })
+
+                        }
+                    );
+
+                }
+
+                // ==================================================
+                // LER RESPOSTA
+                // ==================================================
+
+                const result =
+                    await response.json();
+
+                console.log(
+                    "📥 Resposta ao salvar:",
+                    result
+                );
+
+                // ==================================================
+                // VERIFICAR ERRO
+                // ==================================================
+
+                if (
+                    !response.ok ||
+                    !result.sucesso
+                ) {
+
+                    console.error(
+                        "❌ Erro retornado pela API:",
+                        result
+                    );
+
+                    alert(
+                        result.mensagem ||
+                        result.erro ||
+                        "Não foi possível salvar a nota."
+                    );
+
+                    return;
+
+                }
+
+                // ==================================================
+                // SUCESSO
+                // ==================================================
+
+                console.log(
+                    "✅ Nota salva com sucesso!"
+                );
+
+                noteForm.reset();
+
+                document.getElementById(
+                    "note-id"
+                ).value = "";
+
+                modal.classList.add("hidden");
+
+                await loadNotes();
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Erro ao salvar nota:",
+                    error
+                );
+
+                alert(
+                    "Não foi possível conectar ao servidor."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+// ======================================================
+// MOSTRAR NOTAS
+// ======================================================
+
+function renderNotes() {
+
+    if (!notesContainer) {
+        return;
     }
 
+    const search =
+        searchNotes
+            ? searchNotes.value
+                .toLowerCase()
+                .trim()
+            : "";
 
-    // 3. Mais recentes primeiro
-    const dateA =
-        new Date(a.updatedAt || a.createdAt);
+    const category =
+        filterCategory
+            ? filterCategory.value
+            : "all";
 
-    const dateB =
-        new Date(b.updatedAt || b.createdAt);
+    // ==================================================
+    // FILTRAR
+    // ==================================================
 
+    let filteredNotes =
+        notes.filter(function (note) {
 
-    return dateB - dateA;
+            const title =
+                (note.title || "")
+                    .toLowerCase();
 
-});
+            const content =
+                (note.content || "")
+                    .toLowerCase();
+
+            const matchesSearch =
+                title.includes(search) ||
+                content.includes(search);
+
+            const matchesCategory =
+                category === "all" ||
+                note.category === category;
+
+            return (
+                matchesSearch &&
+                matchesCategory
+            );
+
+        });
+
+    // ==================================================
+    // ORDENAR
+    // ==================================================
+
+    filteredNotes.sort(
+        function (a, b) {
+
+            // Fixadas primeiro
+
+            if (
+                Boolean(a.pinned) !==
+                Boolean(b.pinned)
+            ) {
+
+                return (
+                    Number(Boolean(b.pinned)) -
+                    Number(Boolean(a.pinned))
+                );
+
+            }
+
+            // Favoritas depois
+
+            if (
+                Boolean(a.favorite) !==
+                Boolean(b.favorite)
+            ) {
+
+                return (
+                    Number(Boolean(b.favorite)) -
+                    Number(Boolean(a.favorite))
+                );
+
+            }
+
+            // Mais recentes primeiro
+
+            const dateA =
+                new Date(
+                    a.updated_at ||
+                    a.updatedAt ||
+                    a.created_at ||
+                    a.createdAt ||
+                    0
+                );
+
+            const dateB =
+                new Date(
+                    b.updated_at ||
+                    b.updatedAt ||
+                    b.created_at ||
+                    b.createdAt ||
+                    0
+                );
+
+            return dateB - dateA;
+
+        }
+    );
+
+    // ==================================================
+    // LIMPAR
+    // ==================================================
 
     notesContainer.innerHTML = "";
 
+    // ==================================================
+    // NENHUMA NOTA
+    // ==================================================
 
     if (filteredNotes.length === 0) {
 
@@ -265,7 +479,9 @@ function renderNotes() {
                     🔎
                 </div>
 
-                <h3>Nenhuma nota encontrada</h3>
+                <h3>
+                    Nenhuma nota encontrada
+                </h3>
 
                 <p>
                     Tente pesquisar outra coisa.
@@ -279,285 +495,488 @@ function renderNotes() {
 
     }
 
+    // ==================================================
+    // CRIAR CARDS
+    // ==================================================
 
-    filteredNotes.forEach(function (note) {
+    filteredNotes.forEach(
+        function (note) {
 
-        const noteCard =
-            document.createElement("article");
+            const noteCard =
+                document.createElement(
+                    "article"
+                );
 
+            noteCard.className =
+                "note-card";
 
-        noteCard.className =
-            "note-card";
+            noteCard.innerHTML = `
 
+                <div class="note-card-header">
 
-        noteCard.innerHTML = `
+                    <div>
 
-            <div class="note-card-header">
+                        ${
+                            note.pinned
+                                ? `<span class="pin">📌</span>`
+                                : ""
+                        }
 
-                <div>
+                        <h3>
+                            ${escapeHTML(note.title)}
+                        </h3>
 
-                    ${
-                        note.pinned
-                        ? `<span class="pin">📌</span>`
-                        : ""
-                    }
+                    </div>
 
-                    <h3>
-                        ${escapeHTML(note.title)}
-                    </h3>
+                    <button
+                        class="favorite-button"
+                        onclick="toggleFavorite('${note.id}')"
+                        title="Favoritar"
+                    >
+
+                        ${
+                            note.favorite
+                                ? "⭐"
+                                : "☆"
+                        }
+
+                    </button>
 
                 </div>
 
+                <span class="note-category">
 
-                <button
-                    class="favorite-button"
-                    onclick="toggleFavorite('${note.id}')"
-                >
-                    ${note.favorite ? "⭐" : "☆"}
-                </button>
-
-            </div>
-
-
-            <span class="note-category">
-                ${escapeHTML(note.category)}
-            </span>
-
-
-            <p class="note-preview">
-                ${escapeHTML(note.content)}
-            </p>
-
-
-            <div class="note-footer">
-
-                <span>
-                    📅 ${formatDate(
-                        note.updatedAt || note.createdAt
+                    ${escapeHTML(
+                        note.category || ""
                     )}
+
                 </span>
 
+                <p class="note-preview">
 
-                <div class="note-buttons">
+                    ${escapeHTML(
+                        note.content || ""
+                    )}
 
-                    <button
-                        onclick="editNote('${note.id}')"
-                        title="Editar"
-                    >
-                        ✏️
-                    </button>
+                </p>
 
-                    <button
-                        onclick="togglePinned('${note.id}')"
-                        title="Fixar"
-                    >
-                        📌
-                    </button>
+                <div class="note-footer">
 
-                    <button
-                        onclick="deleteNote('${note.id}')"
-                        title="Excluir"
-                    >
-                        🗑️
-                    </button>
+                    <span>
+
+                        📅 ${formatDate(
+                            note.updated_at ||
+                            note.updatedAt ||
+                            note.created_at ||
+                            note.createdAt
+                        )}
+
+                    </span>
+
+                    <div class="note-buttons">
+
+                        <button
+                            onclick="editNote('${note.id}')"
+                            title="Editar"
+                        >
+                            ✏️
+                        </button>
+
+                        <button
+                            onclick="togglePinned('${note.id}')"
+                            title="Fixar"
+                        >
+                            📌
+                        </button>
+
+                        <button
+                            onclick="deleteNote('${note.id}')"
+                            title="Excluir"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
 
                 </div>
 
-            </div>
+            `;
 
-        `;
+            notesContainer.appendChild(
+                noteCard
+            );
 
-
-        notesContainer.appendChild(noteCard);
-
-    });
+        }
+    );
 
 }
 
-
-// =============================
+// ======================================================
 // FAVORITAR
-// =============================
+// ======================================================
 
-function toggleFavorite(id) {
+async function toggleFavorite(id) {
 
     const note =
-        notes.find(function (note) {
+        notes.find(
+            function (note) {
 
-            return note.id === id;
+                return (
+                    String(note.id) ===
+                    String(id)
+                );
 
-        });
+            }
+        );
 
+    if (!note) {
+        return;
+    }
 
-    if (!note) return;
+    const newValue =
+        !Boolean(note.favorite);
 
+    try {
 
-    note.favorite =
-        !note.favorite;
+        const response =
+            await fetch(
+                `${API_URL}/${id}/favorite`,
+                {
 
+                    method: "PATCH",
 
-    NexusStorage.salvar("notas", notes);
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-    renderNotes();
+                    body: JSON.stringify({
+
+                        favorite:
+                            newValue
+
+                    })
+
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao favoritar nota."
+            );
+
+        }
+
+        await loadNotes();
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erro ao favoritar:",
+            error
+        );
+
+        alert(
+            "Não foi possível alterar o favorito."
+        );
+
+    }
 
 }
 
-
-// =============================
+// ======================================================
 // FIXAR
-// =============================
+// ======================================================
 
-function togglePinned(id) {
+async function togglePinned(id) {
 
     const note =
-        notes.find(function (note) {
+        notes.find(
+            function (note) {
 
-            return note.id === id;
+                return (
+                    String(note.id) ===
+                    String(id)
+                );
 
-        });
+            }
+        );
 
+    if (!note) {
+        return;
+    }
 
-    if (!note) return;
+    const newValue =
+        !Boolean(note.pinned);
 
+    try {
 
-    note.pinned =
-        !note.pinned;
+        const response =
+            await fetch(
+                `${API_URL}/${id}/pinned`,
+                {
 
+                    method: "PATCH",
 
-    NexusStorage.salvar("notas", notes);
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-    renderNotes();
+                    body: JSON.stringify({
+
+                        pinned:
+                            newValue
+
+                    })
+
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao fixar nota."
+            );
+
+        }
+
+        await loadNotes();
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erro ao fixar:",
+            error
+        );
+
+        alert(
+            "Não foi possível alterar a nota fixada."
+        );
+
+    }
 
 }
 
-
-// =============================
+// ======================================================
 // EDITAR
-// =============================
+// ======================================================
 
 function editNote(id) {
 
     const note =
-        notes.find(function (note) {
+        notes.find(
+            function (note) {
 
-            return note.id === id;
+                return (
+                    String(note.id) ===
+                    String(id)
+                );
 
-        });
+            }
+        );
 
+    if (!note) {
+        return;
+    }
 
-    if (!note) return;
-
-
-    document.getElementById("modal-title").textContent =
+    document.getElementById(
+        "modal-title"
+    ).textContent =
         "Editar nota";
 
-
-    document.getElementById("note-id").value =
+    document.getElementById(
+        "note-id"
+    ).value =
         note.id;
 
+    document.getElementById(
+        "note-title"
+    ).value =
+        note.title || "";
 
-    document.getElementById("note-title").value =
-        note.title;
+    document.getElementById(
+        "note-category"
+    ).value =
+        note.category || "";
 
+    document.getElementById(
+        "note-content"
+    ).value =
+        note.content || "";
 
-    document.getElementById("note-category").value =
-        note.category;
-
-
-    document.getElementById("note-content").value =
-        note.content;
-
-
-    modal.classList.remove("hidden");
+    modal.classList.remove(
+        "hidden"
+    );
 
 }
 
-
-// =============================
+// ======================================================
 // EXCLUIR
-// =============================
+// ======================================================
 
-function deleteNote(id) {
+async function deleteNote(id) {
 
     const confirmDelete =
-        confirm("Deseja realmente excluir esta nota?");
+        confirm(
+            "Deseja realmente excluir esta nota?"
+        );
 
+    if (!confirmDelete) {
+        return;
+    }
 
-    if (!confirmDelete) return;
+    try {
 
+        const response =
+            await fetch(
+                `${API_URL}/${id}`,
+                {
 
-    notes =
-        notes.filter(function (note) {
+                    method: "DELETE"
 
-            return note.id !== id;
+                }
+            );
 
-        });
+        const result =
+            await response.json();
 
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
 
-    NexusStorage.salvar("notas", notes);
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao excluir nota."
+            );
 
-    renderNotes();
+        }
+
+        await loadNotes();
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erro ao excluir:",
+            error
+        );
+
+        alert(
+            "Não foi possível excluir a nota."
+        );
+
+    }
 
 }
 
-
-// =============================
-// FORMATAÇÃO
-// =============================
+// ======================================================
+// FORMATAÇÃO DE DATA
+// ======================================================
 
 function formatDate(date) {
 
-    return new Date(date)
-        .toLocaleDateString("pt-BR");
+    if (!date) {
+        return "";
+    }
+
+    const parsedDate =
+        new Date(date);
+
+    if (
+        Number.isNaN(
+            parsedDate.getTime()
+        )
+    ) {
+
+        return "";
+
+    }
+
+    return parsedDate
+        .toLocaleDateString(
+            "pt-BR"
+        );
 
 }
 
+// ======================================================
+// SEGURANÇA
+// ======================================================
 
 function escapeHTML(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    div.textContent = text;
+    div.textContent =
+        text || "";
 
     return div.innerHTML;
 
 }
 
-searchNotes.addEventListener(
-    "input",
-    renderNotes
-);
+// ======================================================
+// PESQUISA
+// ======================================================
 
+if (searchNotes) {
 
-filterCategory.addEventListener(
-    "change",
-    renderNotes
-);
+    searchNotes.addEventListener(
+        "input",
+        renderNotes
+    );
 
-// =============================
+}
+
+if (filterCategory) {
+
+    filterCategory.addEventListener(
+        "change",
+        renderNotes
+    );
+
+}
+
+// ======================================================
 // INICIAR
-// =============================
+// ======================================================
 
-renderNotes();  
+loadNotes();
 
-// =============================
+// ======================================================
 // ABRIR MODAL PELO DASHBOARD
-// =============================
+// ======================================================
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
-
-if (params.get("novo") === "true") {
-
-    const newNoteButton =
-        document.getElementById(
-            "new-note-button"
-        );
-
+if (
+    params.get("novo") ===
+    "true"
+) {
 
     if (newNoteButton) {
 

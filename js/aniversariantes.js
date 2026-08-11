@@ -1,12 +1,14 @@
 console.log("NEXUS — Aniversariantes iniciado!");
 
+// =================================
+// CONFIGURAÇÃO DA API
+// =================================
 
-// =============================
+const API_URL = "http://localhost:3000/api/aniversariantes";
+
+// =================================
 // ELEMENTOS
-// =============================
-
-const birthdayModal =
-    document.getElementById("birthday-modal");
+// =================================
 
 const newBirthdayButton =
     document.getElementById("new-birthday-button");
@@ -14,17 +16,23 @@ const newBirthdayButton =
 const emptyAddBirthday =
     document.getElementById("empty-add-birthday");
 
+const birthdayModal =
+    document.getElementById("birthday-modal");
+
 const closeBirthdayModal =
     document.getElementById("close-birthday-modal");
 
 const cancelBirthday =
     document.getElementById("cancel-birthday");
 
-const birthdayOverlay =
-    document.querySelector(".modal-overlay");
-
 const birthdayForm =
     document.getElementById("birthday-form");
+
+const birthdaysList =
+    document.getElementById("birthdays-list");
+
+const birthdayModalTitle =
+    document.getElementById("birthday-modal-title");
 
 const birthdayName =
     document.getElementById("birthday-name");
@@ -35,41 +43,34 @@ const birthdayDate =
 const birthdayNote =
     document.getElementById("birthday-note");
 
-const birthdaysList =
-    document.getElementById("birthdays-list");
+
+// =================================
+// DADOS
+// =================================
+
+let birthdays = [];
 
 
-// =============================
-// ID EM EDIÇÃO
-// =============================
-
-let editingBirthdayId = null;
-
-
-// =============================
+// =================================
 // ABRIR MODAL
-// =============================
+// =================================
 
 function openBirthdayModal() {
 
+    birthdayModalTitle.textContent =
+        "Novo aniversariante";
+
     birthdayForm.reset();
 
-    editingBirthdayId = null;
-
-    document.getElementById(
-        "birthday-modal-title"
-    ).textContent = "Novo aniversariante";
+    birthdayForm.dataset.id = "";
 
     birthdayModal.classList.remove("hidden");
-
-    birthdayName.focus();
-
 }
 
 
-// =============================
+// =================================
 // FECHAR MODAL
-// =============================
+// =================================
 
 function closeBirthdayModalFunction() {
 
@@ -77,23 +78,22 @@ function closeBirthdayModalFunction() {
 
     birthdayForm.reset();
 
-    editingBirthdayId = null;
-
-    document.getElementById(
-        "birthday-modal-title"
-    ).textContent = "Novo aniversariante";
-
+    birthdayForm.dataset.id = "";
 }
 
 
-// =============================
-// EVENTOS
-// =============================
+// =================================
+// EVENTOS DOS BOTÕES
+// =================================
 
-newBirthdayButton.addEventListener(
-    "click",
-    openBirthdayModal
-);
+if (newBirthdayButton) {
+
+    newBirthdayButton.addEventListener(
+        "click",
+        openBirthdayModal
+    );
+
+}
 
 
 if (emptyAddBirthday) {
@@ -106,33 +106,117 @@ if (emptyAddBirthday) {
 }
 
 
-closeBirthdayModal.addEventListener(
-    "click",
-    closeBirthdayModalFunction
-);
+if (closeBirthdayModal) {
+
+    closeBirthdayModal.addEventListener(
+        "click",
+        closeBirthdayModalFunction
+    );
+
+}
 
 
-cancelBirthday.addEventListener(
-    "click",
-    closeBirthdayModalFunction
-);
+if (cancelBirthday) {
+
+    cancelBirthday.addEventListener(
+        "click",
+        closeBirthdayModalFunction
+    );
+
+}
 
 
-birthdayOverlay.addEventListener(
-    "click",
-    closeBirthdayModalFunction
-);
+// =================================
+// CARREGAR ANIVERSARIANTES
+// =================================
+
+async function loadBirthdays() {
+
+    try {
+
+        const response =
+            await fetch(API_URL);
+
+        const result =
+            await response.json();
 
 
-// =============================
-// SALVAR
-// =============================
+        console.log(
+            "Resposta da API:",
+            result
+        );
+
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                "Erro ao carregar aniversariantes."
+            );
+
+        }
+
+
+        birthdays =
+            result.aniversariantes || [];
+
+        console.log("Nomes recebidos da API:", birthdays);
+
+
+        renderBirthdays();
+
+        updateNextBirthday();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar aniversariantes:",
+            error
+        );
+
+
+        birthdaysList.innerHTML = `
+
+            <div class="birthday-empty">
+
+                <div>
+                    ⚠️
+                </div>
+
+                <h3>
+                    Não foi possível carregar
+                </h3>
+
+                <p>
+                    Verifique se o backend do NEXUS está funcionando.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =================================
+// SALVAR ANIVERSARIANTE
+// =================================
 
 birthdayForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
+
+
+        const id =
+            birthdayForm.dataset.id;
 
 
         const name =
@@ -149,113 +233,167 @@ birthdayForm.addEventListener(
 
         if (!name || !date) {
 
+            alert(
+                "Preencha o nome e a data de nascimento."
+            );
+
             return;
 
         }
 
 
-        const birthdays =
-            NexusStorage.buscar(
-                "aniversariantes"
-            );
+        try {
+
+            let response;
 
 
-        // =============================
-        // EDITAR
-        // =============================
+            // =================================
+            // EDITAR
+            // =================================
 
-        if (editingBirthdayId !== null) {
+            if (id) {
 
-            const index =
-                birthdays.findIndex(
-                    function (birthday) {
+                response =
+                    await fetch(
+                        `${API_URL}/${id}`,
+                        {
 
-                        return (
-                            birthday.id ===
-                            editingBirthdayId
-                        );
+                            method: "PUT",
 
-                    }
-                );
+                            headers: {
 
+                                "Content-Type":
+                                    "application/json"
 
-            if (index !== -1) {
+                            },
 
-                birthdays[index].name =
-                    name;
+                            body:
+                                JSON.stringify({
 
-                birthdays[index].date =
-                    date;
+                                    name:
+                                        name,
 
-                birthdays[index].note =
-                    note;
+                                    date:
+                                        date,
 
-                birthdays[index].updatedAt =
-                    new Date().toISOString();
+                                    note:
+                                        note
+
+                                })
+
+                        }
+                    );
 
             }
 
-        }
+
+            // =================================
+            // CRIAR
+            // =================================
+
+            else {
+
+                response =
+                    await fetch(
+                        API_URL,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    name:
+                                        name,
+
+                                    date:
+                                        date,
+
+                                    note:
+                                        note
+
+                                })
+
+                        }
+                    );
+
+            }
 
 
-        // =============================
-        // NOVO
-        // =============================
-
-        else {
-
-            const birthday = {
-
-                id: Date.now(),
-
-                name: name,
-
-                date: date,
-
-                note: note,
-
-                createdAt:
-                    new Date().toISOString(),
-
-                updatedAt:
-                    new Date().toISOString()
-
-            };
+            const result =
+                await response.json();
 
 
-            birthdays.push(
-                birthday
+            console.log(
+                "Resposta ao salvar:",
+                result
+            );
+
+
+            if (
+                !response.ok ||
+                !result.sucesso
+            ) {
+
+                throw new Error(
+                    result.erro ||
+                    result.mensagem ||
+                    "Erro ao salvar aniversariante."
+                );
+
+            }
+
+
+            // =================================
+            // FINALIZAR
+            // =================================
+
+            closeBirthdayModalFunction();
+
+
+            await loadBirthdays();
+
+
+            alert(
+                id
+                    ? "Aniversariante atualizado! ✏️"
+                    : "Aniversariante criado! 🎂"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao salvar aniversariante:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Não foi possível salvar o aniversariante."
             );
 
         }
-
-
-        NexusStorage.salvar(
-            "aniversariantes",
-            birthdays
-        );
-
-
-        renderBirthdays();
-
-        updateNextBirthday();
-
-        closeBirthdayModalFunction();
 
     }
 );
 
 
-// =============================
-// RENDERIZAR
-// =============================
+// =================================
+// MOSTRAR ANIVERSARIANTES
+// =================================
 
 function renderBirthdays() {
 
-    const birthdays =
-        NexusStorage.buscar(
-            "aniversariantes"
-        );
+    birthdaysList.innerHTML = "";
 
 
     if (birthdays.length === 0) {
@@ -288,14 +426,16 @@ function renderBirthdays() {
         `;
 
 
-        document
-            .getElementById(
+        const newEmptyButton =
+            document.getElementById(
                 "empty-add-birthday"
-            )
-            .addEventListener(
-                "click",
-                openBirthdayModal
             );
+
+
+        newEmptyButton.addEventListener(
+            "click",
+            openBirthdayModal
+        );
 
 
         return;
@@ -303,50 +443,44 @@ function renderBirthdays() {
     }
 
 
-    birthdaysList.innerHTML = "";
-
-
-    // =============================
-    // ORDENAR POR PROXIMIDADE
-    // =============================
+    // =================================
+    // ORDENAR POR PRÓXIMO ANIVERSÁRIO
+    // =================================
 
     const sortedBirthdays =
         [...birthdays].sort(
             function (a, b) {
 
-                const daysA =
-                    getDaysUntilBirthday(
-                        a.date
-                    );
-
-
-                const daysB =
-                    getDaysUntilBirthday(
-                        b.date
-                    );
-
-
-                return daysA - daysB;
+                return (
+                    getNextBirthdayDate(a.date) -
+                    getNextBirthdayDate(b.date)
+                );
 
             }
         );
 
 
-    // =============================
+    // =================================
     // CRIAR CARDS
-    // =============================
+    // =================================
 
     sortedBirthdays.forEach(
         function (birthday) {
 
             const card =
                 document.createElement(
-                    "div"
+                    "article"
                 );
 
 
             card.className =
                 "birthday-card";
+
+
+            const birthdayDateFormatted =
+                formatBirthdayDate(
+                    birthday.date
+                );
 
 
             const age =
@@ -355,153 +489,105 @@ function renderBirthdays() {
                 );
 
 
-            const formattedDate =
-                formatBirthdayDate(
+            const nextBirthday =
+                getNextBirthdayDate(
                     birthday.date
                 );
 
 
             const daysUntil =
-                getDaysUntilBirthday(
-                    birthday.date
+                calculateDaysUntil(
+                    nextBirthday
                 );
 
 
-            // =============================
-            // STATUS DO ANIVERSÁRIO
-            // =============================
-
-            let birthdayStatus = "";
+            let daysText;
 
 
             if (daysUntil === 0) {
 
-                birthdayStatus = `
+                daysText =
+                    "🎉 É hoje!";
 
-                    <div class="birthday-countdown today">
+            } else if (daysUntil === 1) {
 
-                        🎉 Hoje é o aniversário!
+                daysText =
+                    "Amanhã!";
 
-                    </div>
+            } else {
 
-                `;
-
-            }
-
-            else if (daysUntil === 1) {
-
-                birthdayStatus = `
-
-                    <div class="birthday-countdown tomorrow">
-
-                        ⏳ Amanhã!
-
-                    </div>
-
-                `;
+                daysText =
+                    `Em ${daysUntil} dias`;
 
             }
 
-            else {
-
-                birthdayStatus = `
-
-                    <div class="birthday-countdown">
-
-                        ⏳ Em ${daysUntil} dias
-
-                    </div>
-
-                `;
-
-            }
-
-
-            // =============================
-            // HTML DO CARD
-            // =============================
 
             card.innerHTML = `
 
                 <div class="birthday-card-icon">
-
                     🎂
-
                 </div>
 
 
                 <div class="birthday-card-content">
 
                     <h3>
-
                         ${escapeHTML(
-                            birthday.name
-                        )}
-
+                birthday.name
+            )}
                     </h3>
 
 
-                    <p>
-
-                        🎂 ${formattedDate}
-
-                    </p>
-
-
                     <span>
-
-                        ${age} anos
-
+                        ${birthdayDateFormatted}
                     </span>
 
 
-                    ${birthdayStatus}
+                    <p>
+                        ${age} anos
+                    </p>
 
 
-                    ${
-                        birthday.note
-                            ? `
+                    <small>
+                        ${daysText}
+                    </small>
 
+
+                    ${birthday.note
+                    ? `
                                 <small>
-
+                                    📝
                                     ${escapeHTML(
-                                        birthday.note
-                                    )}
-
+                        birthday.note
+                    )}
                                 </small>
-
                             `
-                            : ""
-                    }
+                    : ""
+                }
 
 
-                    <div class="birthday-card-actions">
-
+                    <div
+                        class="birthday-card-actions"
+                    >
 
                         <button
-                            class="edit-birthday"
-                            data-id="${birthday.id}"
+                            type="button"
+                            onclick="editBirthday('${birthday.id}')"
                             title="Editar"
                         >
-
                             ✏️
-
                         </button>
 
 
                         <button
-                            class="delete-birthday"
-                            data-id="${birthday.id}"
+                            type="button"
+                            onclick="deleteBirthday('${birthday.id}')"
                             title="Excluir"
                         >
-
                             🗑️
-
                         </button>
 
-
                     </div>
-
 
                 </div>
 
@@ -515,207 +601,255 @@ function renderBirthdays() {
         }
     );
 
-
-    addBirthdayActionEvents();
-
 }
 
 
-// =============================
-// EVENTOS DOS CARDS
-// =============================
+// =================================
+// PRÓXIMO ANIVERSÁRIO
+// =================================
 
-function addBirthdayActionEvents() {
+function updateNextBirthday() {
 
-    const editButtons =
-        document.querySelectorAll(
-            ".edit-birthday"
+    const nameElement =
+        document.getElementById(
+            "next-birthday-name"
         );
 
 
-    const deleteButtons =
-        document.querySelectorAll(
-            ".delete-birthday"
+    const dateElement =
+        document.getElementById(
+            "next-birthday-date"
         );
 
 
-    editButtons.forEach(
-        function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    editBirthday(
-                        Number(
-                            button.dataset.id
-                        )
-                    );
-
-                }
-            );
-
-        }
-    );
+    if (
+        !nameElement ||
+        !dateElement
+    ) {
+        return;
+    }
 
 
-    deleteButtons.forEach(
-        function (button) {
+    if (birthdays.length === 0) {
 
-            button.addEventListener(
-                "click",
-                function () {
-
-                    deleteBirthday(
-                        Number(
-                            button.dataset.id
-                        )
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
+        nameElement.textContent =
+            "Nenhum aniversariante";
 
 
-// =============================
-// EDITAR
-// =============================
+        dateElement.textContent =
+            "Adicione alguém para começar.";
 
-function editBirthday(id) {
-
-    const birthdays =
-        NexusStorage.buscar(
-            "aniversariantes"
-        );
-
-
-    const birthday =
-        birthdays.find(
-            function (item) {
-
-                return item.id === id;
-
-            }
-        );
-
-
-    if (!birthday) {
 
         return;
 
     }
 
 
-    editingBirthdayId =
+    const sortedBirthdays =
+        [...birthdays].sort(
+            function (a, b) {
+
+                return (
+                    getNextBirthdayDate(a.date) -
+                    getNextBirthdayDate(b.date)
+                );
+
+            }
+        );
+
+
+    const next =
+        sortedBirthdays[0];
+
+
+    const nextDate =
+        getNextBirthdayDate(
+            next.date
+        );
+
+
+    const daysUntil =
+        calculateDaysUntil(
+            nextDate
+        );
+
+
+    nameElement.textContent =
+        next.name;
+
+
+    if (daysUntil === 0) {
+
+        dateElement.textContent =
+            "🎉 É hoje!";
+
+    } else if (daysUntil === 1) {
+
+        dateElement.textContent =
+            `Amanhã — ${formatBirthdayDate(next.date)}`;
+
+    } else {
+
+        dateElement.textContent =
+            `${formatBirthdayDate(next.date)} — em ${daysUntil} dias`;
+
+    }
+
+}
+
+
+// =================================
+// EDITAR
+// =================================
+
+function editBirthday(id) {
+
+    const birthday =
+        birthdays.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(id);
+
+            }
+        );
+
+
+    if (!birthday) {
+        return;
+    }
+
+
+    birthdayModalTitle.textContent =
+        "Editar aniversariante";
+
+
+    birthdayForm.dataset.id =
         birthday.id;
 
 
     birthdayName.value =
-        birthday.name;
+        birthday.name || "";
 
 
     birthdayDate.value =
-        birthday.date;
+        birthday.date || "";
 
 
     birthdayNote.value =
         birthday.note || "";
 
 
-    document.getElementById(
-        "birthday-modal-title"
-    ).textContent =
-        "Editar aniversariante";
-
-
     birthdayModal.classList.remove(
         "hidden"
     );
 
-
-    birthdayName.focus();
-
 }
 
 
-// =============================
+// =================================
 // EXCLUIR
-// =============================
+// =================================
 
-function deleteBirthday(id) {
-
-    const birthdays =
-        NexusStorage.buscar(
-            "aniversariantes"
-        );
-
+async function deleteBirthday(id) {
 
     const birthday =
         birthdays.find(
             function (item) {
 
-                return item.id === id;
+                return String(item.id) ===
+                    String(id);
 
             }
         );
 
 
     if (!birthday) {
-
         return;
-
     }
 
 
-    const confirmDelete =
+    const confirmed =
         confirm(
-            `Excluir o aniversariante "${birthday.name}"?`
+            `Deseja realmente excluir ${birthday.name}?`
         );
 
 
-    if (!confirmDelete) {
-
+    if (!confirmed) {
         return;
-
     }
 
 
-    const updatedBirthdays =
-        birthdays.filter(
-            function (item) {
+    try {
 
-                return item.id !== id;
+        const response =
+            await fetch(
+                `${API_URL}/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
 
-            }
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "Resposta ao excluir:",
+            result
         );
 
 
-    NexusStorage.salvar(
-        "aniversariantes",
-        updatedBirthdays
-    );
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao excluir aniversariante."
+            );
+
+        }
 
 
-    renderBirthdays();
+        await loadBirthdays();
 
-    updateNextBirthday();
+
+        alert(
+            "Aniversariante excluído! 🗑️"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Não foi possível excluir o aniversariante."
+        );
+
+    }
 
 }
 
 
-// =============================
+// =================================
 // CALCULAR IDADE
-// =============================
+// =================================
 
-function calculateAge(date) {
+function calculateAge(dateString) {
 
     const birthDate =
         new Date(
-            date + "T00:00:00"
+            dateString + "T00:00:00"
         );
 
 
@@ -728,12 +862,18 @@ function calculateAge(date) {
         birthDate.getFullYear();
 
 
+    const month =
+        today.getMonth();
+
+
+    const birthMonth =
+        birthDate.getMonth();
+
+
     if (
-        today.getMonth() <
-        birthDate.getMonth() ||
+        month < birthMonth ||
         (
-            today.getMonth() ===
-            birthDate.getMonth() &&
+            month === birthMonth &&
             today.getDate() <
             birthDate.getDate()
         )
@@ -749,38 +889,17 @@ function calculateAge(date) {
 }
 
 
-// =============================
-// FORMATAR DATA
-// =============================
+// =================================
+// PRÓXIMA DATA DE ANIVERSÁRIO
+// =================================
 
-function formatBirthdayDate(date) {
-
-    const birthDate =
-        new Date(
-            date + "T00:00:00"
-        );
-
-
-    return birthDate.toLocaleDateString(
-        "pt-BR",
-        {
-            day: "2-digit",
-            month: "long"
-        }
-    );
-
-}
-
-
-// =============================
-// DIAS ATÉ O ANIVERSÁRIO
-// =============================
-
-function getDaysUntilBirthday(date) {
+function getNextBirthdayDate(
+    dateString
+) {
 
     const birthDate =
         new Date(
-            date + "T00:00:00"
+            dateString + "T00:00:00"
         );
 
 
@@ -788,27 +907,34 @@ function getDaysUntilBirthday(date) {
         new Date();
 
 
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
+    let year =
+        today.getFullYear();
 
 
     let nextBirthday =
         new Date(
-            today.getFullYear(),
+            year,
             birthDate.getMonth(),
             birthDate.getDate()
         );
 
 
-    if (nextBirthday < today) {
+    const todayWithoutTime =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+
+    if (
+        nextBirthday <
+        todayWithoutTime
+    ) {
 
         nextBirthday =
             new Date(
-                today.getFullYear() + 1,
+                year + 1,
                 birthDate.getMonth(),
                 birthDate.getDate()
             );
@@ -816,26 +942,78 @@ function getDaysUntilBirthday(date) {
     }
 
 
-    const difference =
-        nextBirthday.getTime() -
-        today.getTime();
-
-
-    const days =
-        Math.ceil(
-            difference /
-            (1000 * 60 * 60 * 24)
-        );
-
-
-    return days;
+    return nextBirthday;
 
 }
 
 
-// =============================
+// =================================
+// DIAS ATÉ O ANIVERSÁRIO
+// =================================
+
+function calculateDaysUntil(
+    date
+) {
+
+    const today =
+        new Date();
+
+
+    const todayWithoutTime =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+
+    const difference =
+        date -
+        todayWithoutTime;
+
+
+    return Math.ceil(
+        difference /
+        (1000 * 60 * 60 * 24)
+    );
+
+}
+
+
+// =================================
+// FORMATAR DATA
+// =================================
+
+function formatBirthdayDate(
+    dateString
+) {
+
+    if (!dateString) {
+        return "";
+    }
+
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+
+    return date.toLocaleDateString(
+        "pt-BR",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// =================================
 // SEGURANÇA
-// =============================
+// =================================
 
 function escapeHTML(text) {
 
@@ -854,122 +1032,20 @@ function escapeHTML(text) {
 }
 
 
-// =============================
-// PRÓXIMO ANIVERSÁRIO
-// =============================
-
-function updateNextBirthday() {
-
-    const birthdays =
-        NexusStorage.buscar(
-            "aniversariantes"
-        );
-
-
-    const nextName =
-        document.getElementById(
-            "next-birthday-name"
-        );
-
-
-    const nextDate =
-        document.getElementById(
-            "next-birthday-date"
-        );
-
-
-    if (birthdays.length === 0) {
-
-        nextName.textContent =
-            "Nenhum aniversariante";
-
-
-        nextDate.textContent =
-            "Adicione alguém para começar.";
-
-
-        return;
-
-    }
-
-
-    const today =
-        new Date();
-
-
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    let closestBirthday =
-        null;
-
-
-    let closestDays =
-        Infinity;
-
-
-    birthdays.forEach(
-        function (birthday) {
-
-            const days =
-                getDaysUntilBirthday(
-                    birthday.date
-                );
-
-
-            if (days < closestDays) {
-
-                closestDays =
-                    days;
-
-                closestBirthday =
-                    birthday;
-
-            }
-
-        }
-    );
-
-
-    nextName.textContent =
-        closestBirthday.name;
-
-
-    if (closestDays === 0) {
-
-        nextDate.textContent =
-            "🎉 Hoje é o aniversário!";
-
-    }
-
-    else if (closestDays === 1) {
-
-        nextDate.textContent =
-            "🎂 Amanhã!";
-
-    }
-
-    else {
-
-        nextDate.textContent =
-            `${formatBirthdayDate(
-                closestBirthday.date
-            )} • Em ${closestDays} dias`;
-
-    }
-
-}
-
-
-// =============================
+// =================================
 // INICIAR
-// =============================
+// =================================
 
-renderBirthdays();
+loadBirthdays();
 
-updateNextBirthday();
+
+// =================================
+// EXPOR FUNÇÕES
+// =================================
+
+window.editBirthday =
+    editBirthday;
+
+window.deleteBirthday =
+    deleteBirthday;
+

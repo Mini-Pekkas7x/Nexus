@@ -5,10 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NEXUS — Notas</title>
 
@@ -27,10 +24,7 @@
 
                 <a href="../index.html">
 
-                    <img
-                        src="../assets/img/logo-nexus.png"
-                        alt="NEXUS"
-                    >
+                    <img src="../assets/img/logo-nexus.png" alt="NEXUS">
 
                 </a>
 
@@ -50,14 +44,15 @@
                 </div>
 
 
-                <a
-                    href="../pages/notas.html"
-                    class="menu-item active"
-                >
+                <a href="../pages/notas.html" class="menu-item active">
                     📝
                     <span>Notas</span>
                 </a>
 
+                <a href="./aniversariantes.html" class="menu-item">
+                    🎂
+                    <span>Aniversariantes</span>
+                </a>
 
                 <a href="#" class="menu-item">
                     📅
@@ -183,10 +178,7 @@
                     </div>
 
 
-                    <button
-                        class="primary-button"
-                        id="new-note-button"
-                    >
+                    <button class="primary-button" id="new-note-button">
                         + Nova nota
                     </button>
 
@@ -195,11 +187,7 @@
 
                 <div class="notes-toolbar">
 
-                    <input
-                        type="text"
-                        id="search-notes"
-                        placeholder="🔎 Pesquisar notas..."
-                    >
+                    <input type="text" id="search-notes" placeholder="🔎 Pesquisar notas...">
 
 
                     <select id="filter-category">
@@ -229,10 +217,7 @@
                 </div>
 
 
-                <div
-                    class="notes-grid"
-                    id="notes-container"
-                >
+                <div class="notes-grid" id="notes-container">
 
                 </div>
 
@@ -246,10 +231,7 @@
 
     <!-- MODAL -->
 
-    <div
-        class="modal hidden"
-        id="note-modal"
-    >
+    <div class="modal hidden" id="note-modal">
 
         <div class="modal-content">
 
@@ -259,10 +241,7 @@
                     Nova nota
                 </h3>
 
-                <button
-                    id="close-modal"
-                    class="close-button"
-                >
+                <button id="close-modal" class="close-button">
                     ×
                 </button>
 
@@ -271,22 +250,14 @@
 
             <form id="note-form">
 
-                <input
-                    type="hidden"
-                    id="note-id"
-                >
+                <input type="hidden" id="note-id">
 
 
                 <label for="note-title">
                     Título
                 </label>
 
-                <input
-                    type="text"
-                    id="note-title"
-                    placeholder="Título da nota"
-                    required
-                >
+                <input type="text" id="note-title" placeholder="Título da nota" required>
 
 
                 <label for="note-category">
@@ -318,29 +289,17 @@
                     Conteúdo
                 </label>
 
-                <textarea
-                    id="note-content"
-                    rows="8"
-                    placeholder="Escreva sua nota..."
-                    required
-                ></textarea>
+                <textarea id="note-content" rows="8" placeholder="Escreva sua nota..." required></textarea>
 
 
                 <div class="modal-actions">
 
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="cancel-note"
-                    >
+                    <button type="button" class="secondary-button" id="cancel-note">
                         Cancelar
                     </button>
 
 
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
+                    <button type="submit" class="primary-button">
                         Salvar nota
                     </button>
 
@@ -353,8 +312,8 @@
     </div>
 
     <script>
-    console.log("NOTAS HTML carregado");
-</script>
+        console.log("NOTAS HTML carregado");
+    </script>
 
     <script src="../js/storage.js"></script>
     <script src="../js/notas.js"></script>

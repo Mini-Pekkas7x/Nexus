@@ -5,17 +5,11 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NEXUS — Projetos</title>
 
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
+    <link rel="stylesheet" href="../css/style.css">
 
 </head>
 
@@ -34,10 +28,7 @@
 
                 <a href="../index.html">
 
-                    <img
-                        src="../assets/img/logo-nexus.png"
-                        alt="NEXUS"
-                    >
+                    <img src="../assets/img/logo-nexus.png" alt="NEXUS">
 
                 </a>
 
@@ -46,10 +37,7 @@
 
             <nav class="menu">
 
-                <a
-                    href="../index.html"
-                    class="menu-item"
-                >
+                <a href="../index.html" class="menu-item">
                     🏠
                     <span>Início</span>
                 </a>
@@ -60,37 +48,29 @@
                 </div>
 
 
-                <a
-                    href="../pages/notas.html"
-                    class="menu-item"
-                >
+                <a href="../pages/notas.html" class="menu-item">
                     📝
                     <span>Notas</span>
                 </a>
 
+                <a href="./aniversariantes.html" class="menu-item">
+                    🎂
+                    <span>Aniversariantes</span>
+                </a>
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📅
                     <span>Calendário</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     ⏰
                     <span>Lembretes</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📋
                     <span>Listas</span>
                 </a>
@@ -101,28 +81,19 @@
                 </div>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📚
                     <span>Estudos</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📖
                     <span>Resumos</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     📝
                     <span>Provas & Trabalhos</span>
                 </a>
@@ -133,28 +104,19 @@
                 </div>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     💡
                     <span>Ideias</span>
                 </a>
 
 
-                <a
-                    href="../pages/projetos.html"
-                    class="menu-item active"
-                >
+                <a href="../pages/projetos.html" class="menu-item active">
                     🚀
                     <span>Projetos</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     🔗
                     <span>Links</span>
                 </a>
@@ -165,19 +127,13 @@
                 </div>
 
 
-                <a
-                    href="../pages/conquistas.html"
-                    class="menu-item"
-                >
+                <a href="../pages/conquistas.html" class="menu-item">
                     🏆
                     <span>Conquistas</span>
                 </a>
 
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     💭
                     <span>Diário</span>
                 </a>
@@ -187,10 +143,7 @@
 
             <div class="sidebar-bottom">
 
-                <a
-                    href="#"
-                    class="menu-item"
-                >
+                <a href="#" class="menu-item">
                     ⚙️
                     <span>Configurações</span>
                 </a>
@@ -245,10 +198,7 @@
                     </div>
 
 
-                    <button
-                        class="primary-button"
-                        id="new-project-button"
-                    >
+                    <button class="primary-button" id="new-project-button">
                         + Novo projeto
                     </button>
 
@@ -259,11 +209,7 @@
 
                 <div class="projects-toolbar">
 
-                    <input
-                        type="text"
-                        id="search-projects"
-                        placeholder="🔎 Pesquisar projetos..."
-                    >
+                    <input type="text" id="search-projects" placeholder="🔎 Pesquisar projetos...">
 
 
                     <select id="filter-project-status">
@@ -295,10 +241,7 @@
 
                 <!-- PROJETOS -->
 
-                <div
-                    class="projects-grid"
-                    id="projects-container"
-                >
+                <div class="projects-grid" id="projects-container">
 
                     <div class="project-empty">
 
@@ -329,10 +272,7 @@
     <!-- MODAL NOVO PROJETO -->
     <!-- ============================= -->
 
-    <div
-        class="modal hidden"
-        id="project-modal"
-    >
+    <div class="modal hidden" id="project-modal">
 
         <div class="modal-content">
 
@@ -343,10 +283,7 @@
                 </h3>
 
 
-                <button
-                    id="close-project-modal"
-                    class="close-button"
-                >
+                <button id="close-project-modal" class="close-button">
                     ×
                 </button>
 
@@ -355,22 +292,14 @@
 
             <form id="project-form">
 
-                <input
-                    type="hidden"
-                    id="project-id"
-                >
+                <input type="hidden" id="project-id">
 
 
                 <label for="project-title">
                     Nome do projeto
                 </label>
 
-                <input
-                    type="text"
-                    id="project-title"
-                    placeholder="Ex: Meu novo site"
-                    required
-                >
+                <input type="text" id="project-title" placeholder="Ex: Meu novo site" required>
 
 
                 <label for="project-status">
@@ -402,12 +331,7 @@
                     Descrição
                 </label>
 
-                <textarea
-                    id="project-description"
-                    rows="5"
-                    placeholder="Descreva seu projeto..."
-                    required
-                ></textarea>
+                <textarea id="project-description" rows="5" placeholder="Descreva seu projeto..." required></textarea>
 
 
                 <div class="project-dates">
@@ -418,10 +342,7 @@
                             Data de início
                         </label>
 
-                        <input
-                            type="date"
-                            id="project-start"
-                        >
+                        <input type="date" id="project-start">
 
                     </div>
 
@@ -432,10 +353,7 @@
                             Prazo
                         </label>
 
-                        <input
-                            type="date"
-                            id="project-deadline"
-                        >
+                        <input type="date" id="project-deadline">
 
                     </div>
 
@@ -448,13 +366,7 @@
 
                 <div class="progress-input">
 
-                    <input
-                        type="range"
-                        id="project-progress"
-                        min="0"
-                        max="100"
-                        value="0"
-                    >
+                    <input type="range" id="project-progress" min="0" max="100" value="0">
 
                     <span id="progress-value">
                         0%
@@ -465,19 +377,12 @@
 
                 <div class="modal-actions">
 
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="cancel-project"
-                    >
+                    <button type="button" class="secondary-button" id="cancel-project">
                         Cancelar
                     </button>
 
 
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
+                    <button type="submit" class="primary-button">
                         Salvar projeto
                     </button>
 
@@ -492,7 +397,7 @@
 
     <script src="../js/storage.js"></script>
     <script src="../js/projetos.js"></script>
-    
+
 </body>
 
 </html>
