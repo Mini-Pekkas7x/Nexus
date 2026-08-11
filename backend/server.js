@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 3000;
 // =================================
 
 app.use(cors());
-
 app.use(express.json());
 
 // =================================
@@ -32,49 +31,36 @@ app.get("/", (req, res) => {
 // =================================
 
 app.get("/api/teste", async (req, res) => {
-
     try {
-
         const { data, error } = await supabase
             .from("notas")
             .select("*")
             .limit(1);
 
         if (error) {
-
-            console.error(
-                "Erro Supabase:",
-                error
-            );
+            console.error("Erro Supabase:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao conectar ao Supabase.",
+                mensagem: "Erro ao conectar ao Supabase.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "NEXUS conectado ao Supabase! 🚀",
+            mensagem: "NEXUS conectado ao Supabase! 🚀",
             dados: data
         });
 
     } catch (error) {
-
         console.error("Erro:", error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno no servidor."
+            mensagem: "Erro interno no servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -82,9 +68,7 @@ app.get("/api/teste", async (req, res) => {
 // =================================
 
 app.get("/api/notas", async (req, res) => {
-
     try {
-
         const { data, error } = await supabase
             .from("notas")
             .select("*")
@@ -93,19 +77,13 @@ app.get("/api/notas", async (req, res) => {
             });
 
         if (error) {
-
-            console.error(
-                "Erro ao buscar notas:",
-                error
-            );
+            console.error("Erro ao buscar notas:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao buscar notas.",
+                mensagem: "Erro ao buscar notas.",
                 erro: error.message
             });
-
         }
 
         res.json({
@@ -114,17 +92,13 @@ app.get("/api/notas", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -132,9 +106,7 @@ app.get("/api/notas", async (req, res) => {
 // =================================
 
 app.post("/api/notas", async (req, res) => {
-
     try {
-
         const {
             title,
             content,
@@ -144,68 +116,50 @@ app.post("/api/notas", async (req, res) => {
         } = req.body;
 
         if (!title) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "O título da nota é obrigatório."
+                mensagem: "O título da nota é obrigatório."
             });
-
         }
 
         const { data, error } = await supabase
             .from("notas")
-            .insert([{
-
-                title: title,
-
-                content: content || "",
-
-                category: category || "",
-
-                favorite: favorite || false,
-
-                pinned: pinned || false
-
-            }])
+            .insert([
+                {
+                    title,
+                    content: content || "",
+                    category: category || "",
+                    favorite: favorite || false,
+                    pinned: pinned || false
+                }
+            ])
             .select()
             .single();
 
         if (error) {
-
-            console.error(
-                "Erro ao criar nota:",
-                error
-            );
+            console.error("Erro ao criar nota:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao criar nota.",
+                mensagem: "Erro ao criar nota.",
                 erro: error.message
             });
-
         }
 
         res.status(201).json({
             sucesso: true,
-            mensagem:
-                "Nota criada com sucesso! 📝",
+            mensagem: "Nota criada com sucesso! 📝",
             nota: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -213,9 +167,7 @@ app.post("/api/notas", async (req, res) => {
 // =================================
 
 app.put("/api/notas/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const {
@@ -225,68 +177,48 @@ app.put("/api/notas/:id", async (req, res) => {
         } = req.body;
 
         if (!title) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "O título da nota é obrigatório."
+                mensagem: "O título da nota é obrigatório."
             });
-
         }
 
         const { data, error } = await supabase
             .from("notas")
             .update({
-
-                title: title,
-
+                title,
                 content: content || "",
-
                 category: category || "",
-
-                updated_at:
-                    new Date().toISOString()
-
+                updated_at: new Date().toISOString()
             })
             .eq("id", id)
             .select()
             .single();
 
         if (error) {
-
-            console.error(
-                "Erro ao editar nota:",
-                error
-            );
+            console.error("Erro ao editar nota:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao editar nota.",
+                mensagem: "Erro ao editar nota.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Nota editada com sucesso! ✏️",
+            mensagem: "Nota editada com sucesso! ✏️",
             nota: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -294,9 +226,7 @@ app.put("/api/notas/:id", async (req, res) => {
 // =================================
 
 app.delete("/api/notas/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const { error } = await supabase
@@ -305,185 +235,126 @@ app.delete("/api/notas/:id", async (req, res) => {
             .eq("id", id);
 
         if (error) {
-
-            console.error(
-                "Erro ao excluir nota:",
-                error
-            );
+            console.error("Erro ao excluir nota:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao excluir nota.",
+                mensagem: "Erro ao excluir nota.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Nota excluída com sucesso! 🗑️"
+            mensagem: "Nota excluída com sucesso! 🗑️"
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
 // NOTAS — FAVORITAR / DESFAVORITAR
 // =================================
 
-app.patch(
-    "/api/notas/:id/favorite",
-    async (req, res) => {
+app.patch("/api/notas/:id/favorite", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { favorite } = req.body;
 
-        try {
+        const { data, error } = await supabase
+            .from("notas")
+            .update({
+                favorite: Boolean(favorite),
+                updated_at: new Date().toISOString()
+            })
+            .eq("id", id)
+            .select()
+            .single();
 
-            const { id } = req.params;
+        if (error) {
+            console.error("Erro ao alterar favorito:", error);
 
-            const { favorite } = req.body;
-
-            const { data, error } =
-                await supabase
-                    .from("notas")
-                    .update({
-
-                        favorite:
-                            Boolean(favorite),
-
-                        updated_at:
-                            new Date().toISOString()
-
-                    })
-                    .eq("id", id)
-                    .select()
-                    .single();
-
-            if (error) {
-
-                console.error(
-                    "Erro ao alterar favorito:",
-                    error
-                );
-
-                return res.status(500).json({
-                    sucesso: false,
-                    mensagem:
-                        "Erro ao alterar favorito.",
-                    erro: error.message
-                });
-
-            }
-
-            res.json({
-                sucesso: true,
-                mensagem:
-                    "Favorito atualizado! ⭐",
-                nota: data
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            res.status(500).json({
+            return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro interno do servidor."
+                mensagem: "Erro ao alterar favorito.",
+                erro: error.message
             });
-
         }
 
+        res.json({
+            sucesso: true,
+            mensagem: "Favorito atualizado! ⭐",
+            nota: data
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno do servidor."
+        });
     }
-);
+});
 
 // =================================
 // NOTAS — FIXAR / DESFIXAR
 // =================================
 
-app.patch(
-    "/api/notas/:id/pinned",
-    async (req, res) => {
+app.patch("/api/notas/:id/pinned", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { pinned } = req.body;
 
-        try {
+        const { data, error } = await supabase
+            .from("notas")
+            .update({
+                pinned: Boolean(pinned),
+                updated_at: new Date().toISOString()
+            })
+            .eq("id", id)
+            .select()
+            .single();
 
-            const { id } = req.params;
+        if (error) {
+            console.error("Erro ao alterar fixação:", error);
 
-            const { pinned } = req.body;
-
-            const { data, error } =
-                await supabase
-                    .from("notas")
-                    .update({
-
-                        pinned:
-                            Boolean(pinned),
-
-                        updated_at:
-                            new Date().toISOString()
-
-                    })
-                    .eq("id", id)
-                    .select()
-                    .single();
-
-            if (error) {
-
-                console.error(
-                    "Erro ao alterar fixação:",
-                    error
-                );
-
-                return res.status(500).json({
-                    sucesso: false,
-                    mensagem:
-                        "Erro ao alterar fixação.",
-                    erro: error.message
-                });
-
-            }
-
-            res.json({
-                sucesso: true,
-                mensagem:
-                    "Fixação atualizada! 📌",
-                nota: data
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            res.status(500).json({
+            return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro interno do servidor."
+                mensagem: "Erro ao alterar fixação.",
+                erro: error.message
             });
-
         }
 
+        res.json({
+            sucesso: true,
+            mensagem: "Fixação atualizada! 📌",
+            nota: data
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno do servidor."
+        });
     }
-);
+});
 
 // =================================
 // ANIVERSARIANTES — LISTAR
 // =================================
 
 app.get("/api/aniversariantes", async (req, res) => {
-
     try {
-
         const { data, error } = await supabase
             .from("aniversariantes")
             .select("*")
@@ -492,7 +363,6 @@ app.get("/api/aniversariantes", async (req, res) => {
             });
 
         if (error) {
-
             console.error(
                 "Erro ao buscar aniversariantes:",
                 error
@@ -500,11 +370,9 @@ app.get("/api/aniversariantes", async (req, res) => {
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao buscar aniversariantes.",
+                mensagem: "Erro ao buscar aniversariantes.",
                 erro: error.message
             });
-
         }
 
         res.json({
@@ -513,17 +381,13 @@ app.get("/api/aniversariantes", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -531,9 +395,7 @@ app.get("/api/aniversariantes", async (req, res) => {
 // =================================
 
 app.post("/api/aniversariantes", async (req, res) => {
-
     try {
-
         const {
             name,
             date,
@@ -541,21 +403,18 @@ app.post("/api/aniversariantes", async (req, res) => {
         } = req.body;
 
         if (!name || !date) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "Nome e data de nascimento são obrigatórios."
+                mensagem: "Nome e data de nascimento são obrigatórios."
             });
-
         }
 
         const { data, error } = await supabase
             .from("aniversariantes")
             .insert([
                 {
-                    name: name,
-                    date: date,
+                    name,
+                    date,
                     note: note || ""
                 }
             ])
@@ -563,7 +422,6 @@ app.post("/api/aniversariantes", async (req, res) => {
             .single();
 
         if (error) {
-
             console.error(
                 "Erro ao criar aniversariante:",
                 error
@@ -571,32 +429,25 @@ app.post("/api/aniversariantes", async (req, res) => {
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao criar aniversariante.",
+                mensagem: "Erro ao criar aniversariante.",
                 erro: error.message
             });
-
         }
 
         res.status(201).json({
             sucesso: true,
-            mensagem:
-                "Aniversariante criado com sucesso! 🎂",
+            mensagem: "Aniversariante criado com sucesso! 🎂",
             aniversariante: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -604,9 +455,7 @@ app.post("/api/aniversariantes", async (req, res) => {
 // =================================
 
 app.put("/api/aniversariantes/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const {
@@ -616,35 +465,25 @@ app.put("/api/aniversariantes/:id", async (req, res) => {
         } = req.body;
 
         if (!name || !date) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "Nome e data são obrigatórios."
+                mensagem: "Nome e data são obrigatórios."
             });
-
         }
 
         const { data, error } = await supabase
             .from("aniversariantes")
             .update({
-
-                name: name,
-
-                date: date,
-
+                name,
+                date,
                 note: note || "",
-
-                updated_at:
-                    new Date().toISOString()
-
+                updated_at: new Date().toISOString()
             })
             .eq("id", id)
             .select()
             .single();
 
         if (error) {
-
             console.error(
                 "Erro ao editar aniversariante:",
                 error
@@ -652,32 +491,25 @@ app.put("/api/aniversariantes/:id", async (req, res) => {
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao editar aniversariante.",
+                mensagem: "Erro ao editar aniversariante.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Aniversariante atualizado com sucesso! ✏️",
+            mensagem: "Aniversariante atualizado com sucesso! ✏️",
             aniversariante: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -685,9 +517,7 @@ app.put("/api/aniversariantes/:id", async (req, res) => {
 // =================================
 
 app.delete("/api/aniversariantes/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const { error } = await supabase
@@ -696,7 +526,6 @@ app.delete("/api/aniversariantes/:id", async (req, res) => {
             .eq("id", id);
 
         if (error) {
-
             console.error(
                 "Erro ao excluir aniversariante:",
                 error
@@ -704,31 +533,24 @@ app.delete("/api/aniversariantes/:id", async (req, res) => {
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao excluir aniversariante.",
+                mensagem: "Erro ao excluir aniversariante.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Aniversariante excluído com sucesso! 🗑️"
+            mensagem: "Aniversariante excluído com sucesso! 🗑️"
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -736,9 +558,7 @@ app.delete("/api/aniversariantes/:id", async (req, res) => {
 // =================================
 
 app.get("/api/conquistas", async (req, res) => {
-
     try {
-
         const { data, error } = await supabase
             .from("conquistas")
             .select("*")
@@ -747,19 +567,13 @@ app.get("/api/conquistas", async (req, res) => {
             });
 
         if (error) {
-
-            console.error(
-                "Erro ao buscar conquistas:",
-                error
-            );
+            console.error("Erro ao buscar conquistas:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao buscar conquistas.",
+                mensagem: "Erro ao buscar conquistas.",
                 erro: error.message
             });
-
         }
 
         res.json({
@@ -768,17 +582,13 @@ app.get("/api/conquistas", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -786,9 +596,7 @@ app.get("/api/conquistas", async (req, res) => {
 // =================================
 
 app.post("/api/conquistas", async (req, res) => {
-
     try {
-
         const {
             title,
             description,
@@ -797,63 +605,49 @@ app.post("/api/conquistas", async (req, res) => {
         } = req.body;
 
         if (!title || !description || !date) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "Título, descrição e data são obrigatórios."
+                mensagem: "Título, descrição e data são obrigatórios."
             });
-
         }
 
         const { data, error } = await supabase
             .from("conquistas")
             .insert([
                 {
-                    title: title,
-                    description: description,
+                    title,
+                    description,
                     category: category || "Outros",
-                    date: date
+                    date
                 }
             ])
             .select()
             .single();
 
         if (error) {
-
-            console.error(
-                "Erro ao criar conquista:",
-                error
-            );
+            console.error("Erro ao criar conquista:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao criar conquista.",
+                mensagem: "Erro ao criar conquista.",
                 erro: error.message
             });
-
         }
 
         res.status(201).json({
             sucesso: true,
-            mensagem:
-                "Conquista criada com sucesso! 🏆",
+            mensagem: "Conquista criada com sucesso! 🏆",
             conquista: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -861,9 +655,7 @@ app.post("/api/conquistas", async (req, res) => {
 // =================================
 
 app.put("/api/conquistas/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const {
@@ -874,70 +666,49 @@ app.put("/api/conquistas/:id", async (req, res) => {
         } = req.body;
 
         if (!title || !description || !date) {
-
             return res.status(400).json({
                 sucesso: false,
-                mensagem:
-                    "Título, descrição e data são obrigatórios."
+                mensagem: "Título, descrição e data são obrigatórios."
             });
-
         }
 
         const { data, error } = await supabase
             .from("conquistas")
             .update({
-
-                title: title,
-
-                description: description,
-
+                title,
+                description,
                 category: category || "Outros",
-
-                date: date,
-
-                updated_at:
-                    new Date().toISOString()
-
+                date,
+                updated_at: new Date().toISOString()
             })
             .eq("id", id)
             .select()
             .single();
 
         if (error) {
-
-            console.error(
-                "Erro ao editar conquista:",
-                error
-            );
+            console.error("Erro ao editar conquista:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao editar conquista.",
+                mensagem: "Erro ao editar conquista.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Conquista editada com sucesso! ✏️",
+            mensagem: "Conquista editada com sucesso! ✏️",
             conquista: data
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -945,9 +716,7 @@ app.put("/api/conquistas/:id", async (req, res) => {
 // =================================
 
 app.delete("/api/conquistas/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
 
         const { error } = await supabase
@@ -956,39 +725,28 @@ app.delete("/api/conquistas/:id", async (req, res) => {
             .eq("id", id);
 
         if (error) {
-
-            console.error(
-                "Erro ao excluir conquista:",
-                error
-            );
+            console.error("Erro ao excluir conquista:", error);
 
             return res.status(500).json({
                 sucesso: false,
-                mensagem:
-                    "Erro ao excluir conquista.",
+                mensagem: "Erro ao excluir conquista.",
                 erro: error.message
             });
-
         }
 
         res.json({
             sucesso: true,
-            mensagem:
-                "Conquista excluída com sucesso! 🗑️"
+            mensagem: "Conquista excluída com sucesso! 🗑️"
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
             sucesso: false,
-            mensagem:
-                "Erro interno do servidor."
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
@@ -996,9 +754,7 @@ app.delete("/api/conquistas/:id", async (req, res) => {
 // =================================
 
 app.get("/api/projetos", async (req, res) => {
-
     try {
-
         const { data, error } = await supabase
             .from("projetos")
             .select("*")
@@ -1007,60 +763,36 @@ app.get("/api/projetos", async (req, res) => {
             });
 
         if (error) {
-
-            console.error(
-                "Erro ao buscar projetos:",
-                error
-            );
+            console.error("Erro ao buscar projetos:", error);
 
             return res.status(500).json({
-
                 sucesso: false,
-
-                mensagem:
-                    "Erro ao buscar projetos.",
-
-                erro:
-                    error.message
-
+                mensagem: "Erro ao buscar projetos.",
+                erro: error.message
             });
-
         }
 
         res.json({
-
             sucesso: true,
-
             projetos: data
-
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
-
             sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
-
 
 // =================================
 // PROJETOS — CRIAR
 // =================================
 
 app.post("/api/projetos", async (req, res) => {
-
     try {
-
         const {
             title,
             description,
@@ -1069,721 +801,178 @@ app.post("/api/projetos", async (req, res) => {
             progress
         } = req.body;
 
-
         if (!title || !description) {
-
             return res.status(400).json({
-
                 sucesso: false,
-
-                mensagem:
-                    "Título e descrição são obrigatórios."
-
+                mensagem: "Título e descrição são obrigatórios."
             });
-
         }
 
+        let projectProgress = Number(progress);
 
-        // Garante que o progresso fique entre 0 e 100
-
-        let projectProgress =
-            Number(progress);
-
-        if (
-            isNaN(projectProgress) ||
-            projectProgress < 0
-        ) {
-
+        if (isNaN(projectProgress) || projectProgress < 0) {
             projectProgress = 0;
-
         }
 
         if (projectProgress > 100) {
-
             projectProgress = 100;
-
         }
 
-
         const { data, error } = await supabase
-
             .from("projetos")
-
             .insert([
                 {
-
-                    title:
-                        title,
-
-                    description:
-                        description,
-
-                    category:
-                        category || "Outros",
-
-                    status:
-                        status || "Ideia",
-
-                    progress:
-                        projectProgress
-
-                }
-            ])
-
-            .select()
-
-            .single();
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao criar projeto:",
-                error
-            );
-
-            return res.status(500).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Erro ao criar projeto.",
-
-                erro:
-                    error.message
-
-            });
-
-        }
-
-
-        res.status(201).json({
-
-            sucesso: true,
-
-            mensagem:
-                "Projeto criado com sucesso! 🚀",
-
-            projeto:
-                data
-
-        });
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
-        });
-
-    }
-
-});
-
-
-// =================================
-// PROJETOS — EDITAR
-// =================================
-
-app.put("/api/projetos/:id", async (req, res) => {
-
-    try {
-
-        const { id } =
-            req.params;
-
-
-        const {
-            title,
-            description,
-            category,
-            status,
-            progress
-        } = req.body;
-
-
-        if (!title || !description) {
-
-            return res.status(400).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Título e descrição são obrigatórios."
-
-            });
-
-        }
-
-
-        let projectProgress =
-            Number(progress);
-
-
-        if (
-            isNaN(projectProgress) ||
-            projectProgress < 0
-        ) {
-
-            projectProgress = 0;
-
-        }
-
-
-        if (projectProgress > 100) {
-
-            projectProgress = 100;
-
-        }
-
-
-        const { data, error } =
-            await supabase
-
-                .from("projetos")
-
-                .update({
-
-                    title:
-                        title,
-
-                    description:
-                        description,
-
-                    category:
-                        category || "Outros",
-
-                    status:
-                        status || "Ideia",
-
-                    progress:
-                        projectProgress,
-
-                    updated_at:
-                        new Date().toISOString()
-
-                })
-
-                .eq("id", id)
-
-                .select()
-
-                .single();
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao editar projeto:",
-                error
-            );
-
-            return res.status(500).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Erro ao editar projeto.",
-
-                erro:
-                    error.message
-
-            });
-
-        }
-
-
-        res.json({
-
-            sucesso: true,
-
-            mensagem:
-                "Projeto editado com sucesso! ✏️",
-
-            projeto:
-                data
-
-        });
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
-        });
-
-    }
-
-});
-
-
-// =================================
-// PROJETOS — EXCLUIR
-// =================================
-
-app.delete("/api/projetos/:id", async (req, res) => {
-
-    try {
-
-        const { id } =
-            req.params;
-
-
-        const { error } =
-            await supabase
-
-                .from("projetos")
-
-                .delete()
-
-                .eq("id", id);
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao excluir projeto:",
-                error
-            );
-
-            return res.status(500).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Erro ao excluir projeto.",
-
-                erro:
-                    error.message
-
-            });
-
-        }
-
-
-        res.json({
-
-            sucesso: true,
-
-            mensagem:
-                "Projeto excluído com sucesso! 🗑️"
-
-        });
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
-        });
-
-    }
-
-});
-
-// =================================
-// PROJETOS — LISTAR
-// =================================
-
-app.get("/api/projetos", async (req, res) => {
-
-    try {
-
-        const { data, error } = await supabase
-            .from("projetos")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
-
-        if (error) {
-
-            console.error(
-                "Erro ao buscar projetos:",
-                error
-            );
-
-            return res.status(500).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Erro ao buscar projetos.",
-
-                erro:
-                    error.message
-
-            });
-
-        }
-
-        res.json({
-
-            sucesso: true,
-
-            projetos: data
-
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
-        });
-
-    }
-
-});
-
-
-// =================================
-// PROJETOS — CRIAR
-// =================================
-
-app.post("/api/projetos", async (req, res) => {
-
-    try {
-
-        const {
-            title,
-            description,
-            category,
-            status,
-            progress
-        } = req.body;
-
-
-        if (!title || !description) {
-
-            return res.status(400).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Título e descrição são obrigatórios."
-
-            });
-
-        }
-
-
-        const { data, error } = await supabase
-
-            .from("projetos")
-
-            .insert([
-                {
-
-                    title: title,
-
-                    description:
-                        description,
-
-                    category:
-                        category || "Outros",
-
-                    status:
-                        status || "planning",
-
-                    progress:
-                        Number(progress) || 0
-
-                }
-            ])
-
-            .select()
-
-            .single();
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao criar projeto:",
-                error
-            );
-
-            return res.status(500).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Erro ao criar projeto.",
-
-                erro:
-                    error.message
-
-            });
-
-        }
-
-
-        res.status(201).json({
-
-            sucesso: true,
-
-            mensagem:
-                "Projeto criado com sucesso! 🚀",
-
-            projeto:
-                data
-
-        });
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
-        });
-
-    }
-
-});
-
-
-// =================================
-// PROJETOS — EDITAR
-// =================================
-
-app.put("/api/projetos/:id", async (req, res) => {
-
-    try {
-
-        const { id } = req.params;
-
-
-        const {
-            title,
-            description,
-            category,
-            status,
-            progress
-        } = req.body;
-
-
-        if (!title || !description) {
-
-            return res.status(400).json({
-
-                sucesso: false,
-
-                mensagem:
-                    "Título e descrição são obrigatórios."
-
-            });
-
-        }
-
-
-        const progressValue =
-            Math.min(
-                100,
-                Math.max(
-                    0,
-                    Number(progress) || 0
-                )
-            );
-
-
-        const { data, error } = await supabase
-
-            .from("projetos")
-
-            .update({
-
-                title:
                     title,
-
-                description:
                     description,
-
-                category:
-                    category || "Outros",
-
-                status:
-                    status || "planning",
-
-                progress:
-                    progressValue,
-
-                updated_at:
-                    new Date().toISOString()
-
-            })
-
-            .eq("id", id)
-
+                    category: category || "Outros",
+                    status: status || "planning",
+                    progress: projectProgress
+                }
+            ])
             .select()
-
             .single();
 
-
         if (error) {
-
-            console.error(
-                "Erro ao editar projeto:",
-                error
-            );
+            console.error("Erro ao criar projeto:", error);
 
             return res.status(500).json({
-
                 sucesso: false,
-
-                mensagem:
-                    "Erro ao editar projeto.",
-
-                erro:
-                    error.message
-
+                mensagem: "Erro ao criar projeto.",
+                erro: error.message
             });
-
         }
 
-
-        res.json({
-
+        res.status(201).json({
             sucesso: true,
-
-            mensagem:
-                "Projeto editado com sucesso! ✏️",
-
-            projeto:
-                data
-
+            mensagem: "Projeto criado com sucesso! 🚀",
+            projeto: data
         });
 
-
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
-
             sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
+// =================================
+// PROJETOS — EDITAR
+// =================================
+
+app.put("/api/projetos/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const {
+            title,
+            description,
+            category,
+            status,
+            progress
+        } = req.body;
+
+        if (!title || !description) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Título e descrição são obrigatórios."
+            });
+        }
+
+        const progressValue = Math.min(
+            100,
+            Math.max(
+                0,
+                Number(progress) || 0
+            )
+        );
+
+        const { data, error } = await supabase
+            .from("projetos")
+            .update({
+                title,
+                description,
+                category: category || "Outros",
+                status: status || "planning",
+                progress: progressValue,
+                updated_at: new Date().toISOString()
+            })
+            .eq("id", id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Erro ao editar projeto:", error);
+
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: "Erro ao editar projeto.",
+                erro: error.message
+            });
+        }
+
+        res.json({
+            sucesso: true,
+            mensagem: "Projeto editado com sucesso! ✏️",
+            projeto: data
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno do servidor."
+        });
+    }
+});
 
 // =================================
 // PROJETOS — EXCLUIR
 // =================================
 
 app.delete("/api/projetos/:id", async (req, res) => {
-
     try {
-
         const { id } = req.params;
-
 
         const { error } = await supabase
-
             .from("projetos")
-
             .delete()
-
             .eq("id", id);
 
-
         if (error) {
-
-            console.error(
-                "Erro ao excluir projeto:",
-                error
-            );
+            console.error("Erro ao excluir projeto:", error);
 
             return res.status(500).json({
-
                 sucesso: false,
-
-                mensagem:
-                    "Erro ao excluir projeto.",
-
-                erro:
-                    error.message
-
+                mensagem: "Erro ao excluir projeto.",
+                erro: error.message
             });
-
         }
 
-
         res.json({
-
             sucesso: true,
-
-            mensagem:
-                "Projeto excluído com sucesso! 🗑️"
-
+            mensagem: "Projeto excluído com sucesso! 🗑️"
         });
 
-
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
-
             sucesso: false,
-
-            mensagem:
-                "Erro interno do servidor."
-
+            mensagem: "Erro interno do servidor."
         });
-
     }
-
 });
 
 // =================================
 // INICIAR SERVIDOR
 // =================================
 
-app.listen(PORT, () => {
-
+app.listen(PORT, "0.0.0.0", () => {
     console.log(
-        `NEXUS API rodando em http://localhost:${PORT}`
+        `NEXUS API rodando na porta ${PORT}`
     );
-
 });

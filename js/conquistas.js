@@ -5,7 +5,7 @@ console.log("NEXUS — Conquistas iniciado!");
 // =================================
 
 const API_URL =
-    "http://localhost:3000/api/conquistas";
+    "https://nexus-api-kdu5.onrender.com";
 
 
 // =================================

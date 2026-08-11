@@ -4,7 +4,7 @@ console.log("NEXUS — Aniversariantes iniciado!");
 // CONFIGURAÇÃO DA API
 // =================================
 
-const API_URL = "http://localhost:3000/api/aniversariantes";
+const API_URL = "https://nexus-api-kdu5.onrender.com";
 
 // =================================
 // ELEMENTOS

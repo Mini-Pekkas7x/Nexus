@@ -5,7 +5,7 @@ console.log("NEXUS — Dashboard iniciado!");
 // =================================
 
 const API_BASE_URL =
-    "http://localhost:3000/api";
+    "https://nexus-api-kdu5.onrender.com";
 
 // =================================
 // ELEMENTOS
@@ -85,23 +85,22 @@ async function loadDashboardData() {
         ] = await Promise.all([
 
             fetch(
-                `${API_BASE_URL}/notas`
+                `${API_BASE_URL}/api/notas`
             ),
 
             fetch(
-                `${API_BASE_URL}/conquistas`
+                `${API_BASE_URL}/api/conquistas`
             ),
 
             fetch(
-                `${API_BASE_URL}/projetos`
+                `${API_BASE_URL}/api/projetos`
             ),
 
             fetch(
-                `${API_BASE_URL}/aniversariantes`
+                `${API_BASE_URL}/api/aniversariantes`
             )
 
         ]);
-
 
         // =================================
         // VERIFICAR RESPOSTAS
@@ -120,7 +119,6 @@ async function loadDashboardData() {
 
         }
 
-
         // =================================
         // CONVERTER JSON
         // =================================
@@ -136,7 +134,6 @@ async function loadDashboardData() {
 
         const birthdaysResult =
             await birthdaysResponse.json();
-
 
         console.log(
             "Notas:",
@@ -158,7 +155,6 @@ async function loadDashboardData() {
             birthdaysResult
         );
 
-
         // =================================
         // SALVAR DADOS
         // =================================
@@ -175,13 +171,11 @@ async function loadDashboardData() {
         birthdays =
             birthdaysResult.aniversariantes || [];
 
-
         // =================================
         // ATUALIZAR CONTADORES
         // =================================
 
         updateCounters();
-
 
         // =================================
         // RENDERIZAR
@@ -194,7 +188,6 @@ async function loadDashboardData() {
         renderRecentProjects();
 
         renderDashboardBirthdays();
-
 
     } catch (error) {
 
@@ -213,7 +206,9 @@ async function loadDashboardData() {
 
 function updateCounters() {
 
-    // Notas
+    // =================================
+    // NOTAS
+    // =================================
 
     if (notesCount) {
 
@@ -222,8 +217,9 @@ function updateCounters() {
 
     }
 
-
-    // Conquistas
+    // =================================
+    // CONQUISTAS
+    // =================================
 
     if (achievementsCount) {
 
@@ -232,8 +228,9 @@ function updateCounters() {
 
     }
 
-
-    // Projetos
+    // =================================
+    // PROJETOS
+    // =================================
 
     if (projectsCount) {
 
@@ -242,8 +239,9 @@ function updateCounters() {
 
     }
 
-
-    // Aniversariantes
+    // =================================
+    // ANIVERSARIANTES
+    // =================================
 
     if (birthdaysCount) {
 
@@ -251,7 +249,6 @@ function updateCounters() {
             birthdays.length;
 
     }
-
 
     // =================================
     // PROJETOS EM ANDAMENTO
@@ -269,14 +266,12 @@ function updateCounters() {
             }
         ).length;
 
-
     if (projectsInProgress) {
 
         projectsInProgress.textContent =
             inProgress;
 
     }
-
 
     // =================================
     // PROJETOS CONCLUÍDOS
@@ -293,7 +288,6 @@ function updateCounters() {
 
             }
         ).length;
-
 
     if (projectsCompleted) {
 
@@ -314,9 +308,7 @@ function renderRecentNotes() {
         return;
     }
 
-
     recentNotes.innerHTML = "";
-
 
     if (notes.length === 0) {
 
@@ -339,7 +331,6 @@ function renderRecentNotes() {
         return;
 
     }
-
 
     const sortedNotes =
         [...notes].sort(
@@ -364,10 +355,8 @@ function renderRecentNotes() {
             }
         );
 
-
     const latestNotes =
         sortedNotes.slice(0, 3);
-
 
     latestNotes.forEach(
         function (note) {
@@ -377,10 +366,8 @@ function renderRecentNotes() {
                     "div"
                 );
 
-
             item.className =
                 "dashboard-note";
-
 
             item.innerHTML = `
 
@@ -406,7 +393,6 @@ function renderRecentNotes() {
 
             `;
 
-
             recentNotes.appendChild(
                 item
             );
@@ -426,10 +412,8 @@ function renderRecentAchievements() {
         return;
     }
 
-
     recentAchievements.innerHTML =
         "";
-
 
     if (achievements.length === 0) {
 
@@ -452,7 +436,6 @@ function renderRecentAchievements() {
         return;
 
     }
-
 
     const sortedAchievements =
         [...achievements].sort(
@@ -477,13 +460,11 @@ function renderRecentAchievements() {
             }
         );
 
-
     const latestAchievements =
         sortedAchievements.slice(
             0,
             3
         );
-
 
     latestAchievements.forEach(
         function (achievement) {
@@ -493,10 +474,8 @@ function renderRecentAchievements() {
                     "div"
                 );
 
-
             item.className =
                 "dashboard-achievement";
-
 
             item.innerHTML = `
 
@@ -522,7 +501,6 @@ function renderRecentAchievements() {
 
             `;
 
-
             recentAchievements.appendChild(
                 item
             );
@@ -542,9 +520,7 @@ function renderRecentProjects() {
         return;
     }
 
-
     recentProjects.innerHTML = "";
-
 
     if (projects.length === 0) {
 
@@ -567,7 +543,6 @@ function renderRecentProjects() {
         return;
 
     }
-
 
     const sortedProjects =
         [...projects].sort(
@@ -592,13 +567,11 @@ function renderRecentProjects() {
             }
         );
 
-
     const latestProjects =
         sortedProjects.slice(
             0,
             3
         );
-
 
     latestProjects.forEach(
         function (project) {
@@ -608,16 +581,13 @@ function renderRecentProjects() {
                     "div"
                 );
 
-
             item.className =
                 "dashboard-project";
-
 
             const statusInfo =
                 getProjectStatus(
                     project.status
                 );
-
 
             const progress =
                 Math.min(
@@ -629,7 +599,6 @@ function renderRecentProjects() {
                         ) || 0
                     )
                 );
-
 
             item.innerHTML = `
 
@@ -653,7 +622,6 @@ function renderRecentProjects() {
 
                     </div>
 
-
                     <div class="dashboard-project-progress">
 
                         <div class="dashboard-project-progress-bar">
@@ -664,7 +632,6 @@ function renderRecentProjects() {
 
                         </div>
 
-
                         <span>
                             ${progress}%
                         </span>
@@ -674,7 +641,6 @@ function renderRecentProjects() {
                 </div>
 
             `;
-
 
             recentProjects.appendChild(
                 item
@@ -707,7 +673,6 @@ function getProjectStatus(status) {
 
     };
 
-
     return (
         statuses[status] ||
         "📋 Planejamento"
@@ -724,7 +689,6 @@ function renderDashboardBirthdays() {
     if (!dashboardBirthdays) {
         return;
     }
-
 
     if (birthdays.length === 0) {
 
@@ -755,7 +719,6 @@ function renderDashboardBirthdays() {
 
     }
 
-
     // =================================
     // ORDENAR POR PROXIMIDADE
     // =================================
@@ -777,8 +740,9 @@ function renderDashboardBirthdays() {
             }
         );
 
-
-    // Mostrar somente os 3 próximos
+    // =================================
+    // MOSTRAR OS 3 PRÓXIMOS
+    // =================================
 
     const latestBirthdays =
         sortedBirthdays.slice(
@@ -786,10 +750,8 @@ function renderDashboardBirthdays() {
             3
         );
 
-
     dashboardBirthdays.innerHTML =
         "";
-
 
     latestBirthdays.forEach(
         function (birthday) {
@@ -799,9 +761,7 @@ function renderDashboardBirthdays() {
                     birthday.date
                 );
 
-
             let status = "";
-
 
             if (daysUntil === 0) {
 
@@ -824,18 +784,17 @@ function renderDashboardBirthdays() {
 
             }
 
-
             const item =
                 document.createElement(
                     "div"
                 );
 
-
             item.className =
                 "dashboard-birthday";
 
-
-            // Destacar o próximo aniversário
+            // =================================
+            // DESTACAR O PRÓXIMO
+            // =================================
 
             if (
                 birthday ===
@@ -848,10 +807,8 @@ function renderDashboardBirthdays() {
 
             }
 
-
             item.style.cursor =
                 "pointer";
-
 
             item.addEventListener(
                 "click",
@@ -863,13 +820,11 @@ function renderDashboardBirthdays() {
                 }
             );
 
-
             item.innerHTML = `
 
                 <div class="dashboard-birthday-icon">
                     🎂
                 </div>
-
 
                 <div class="dashboard-birthday-info">
 
@@ -879,7 +834,6 @@ function renderDashboardBirthdays() {
                         )}
                     </strong>
 
-
                     <span>
                         ${formatBirthdayDate(
                             birthday.date
@@ -888,7 +842,6 @@ function renderDashboardBirthdays() {
 
                 </div>
 
-
                 <div class="dashboard-birthday-status">
 
                     ${status}
@@ -896,7 +849,6 @@ function renderDashboardBirthdays() {
                 </div>
 
             `;
-
 
             dashboardBirthdays.appendChild(
                 item
@@ -917,16 +869,13 @@ function getDaysUntilBirthday(date) {
         return 999999;
     }
 
-
     const birthDate =
         new Date(
             date + "T00:00:00"
         );
 
-
     const today =
         new Date();
-
 
     today.setHours(
         0,
@@ -935,14 +884,12 @@ function getDaysUntilBirthday(date) {
         0
     );
 
-
     let nextBirthday =
         new Date(
             today.getFullYear(),
             birthDate.getMonth(),
             birthDate.getDate()
         );
-
 
     if (
         nextBirthday <
@@ -958,11 +905,9 @@ function getDaysUntilBirthday(date) {
 
     }
 
-
     const difference =
         nextBirthday.getTime() -
         today.getTime();
-
 
     return Math.ceil(
         difference /
@@ -981,12 +926,10 @@ function formatBirthdayDate(date) {
         return "";
     }
 
-
     const birthDate =
         new Date(
             date + "T00:00:00"
         );
-
 
     return birthDate.toLocaleDateString(
         "pt-BR",

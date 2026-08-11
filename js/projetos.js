@@ -5,7 +5,7 @@ console.log("NEXUS — Projetos iniciado!");
 // =================================
 
 const API_URL =
-    "http://localhost:3000/api/projetos";
+    "https://nexus-api-kdu5.onrender.com";
 
 // =================================
 // ELEMENTOS
