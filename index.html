@@ -4,7 +4,6 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NEXUS</title>
@@ -12,12 +11,20 @@
     <link rel="stylesheet" href="./css/style.css">
 
     <link rel="manifest" href="./manifest.json">
+
     <meta name="theme-color" content="#a855f7">
 
 </head>
 
 
 <body>
+
+    <!-- ================================= -->
+    <!-- OVERLAY DO MENU MOBILE -->
+    <!-- ================================= -->
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 
     <div id="app">
 
@@ -28,11 +35,15 @@
 
         <aside class="sidebar">
 
+
             <!-- LOGO -->
 
             <div class="logo">
 
-                <img src="./assets/img/logo-nexus.png" alt="NEXUS">
+                <img
+                    src="./assets/img/logo-nexus.png"
+                    alt="NEXUS"
+                >
 
             </div>
 
@@ -44,7 +55,10 @@
 
                 <!-- INÍCIO -->
 
-                <a href="./index.html" class="menu-item active">
+                <a
+                    href="./index.html"
+                    class="menu-item active"
+                >
 
                     🏠
 
@@ -64,7 +78,10 @@
                 </div>
 
 
-                <a href="./pages/notas.html" class="menu-item">
+                <a
+                    href="./pages/notas.html"
+                    class="menu-item"
+                >
 
                     📝
 
@@ -75,7 +92,10 @@
                 </a>
 
 
-                <a href="./pages/aniversariantes.html" class="menu-item">
+                <a
+                    href="./pages/aniversariantes.html"
+                    class="menu-item"
+                >
 
                     🎂
 
@@ -181,7 +201,10 @@
                 </a>
 
 
-                <a href="./pages/projetos.html" class="menu-item">
+                <a
+                    href="./pages/projetos.html"
+                    class="menu-item"
+                >
 
                     🚀
 
@@ -212,7 +235,10 @@
                 </div>
 
 
-                <a href="./pages/conquistas.html" class="menu-item">
+                <a
+                    href="./pages/conquistas.html"
+                    class="menu-item"
+                >
 
                     🏆
 
@@ -274,6 +300,17 @@
             <header class="topbar">
 
 
+                <!-- BOTÃO MENU MOBILE -->
+
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    aria-label="Abrir menu"
+                >
+                    ☰
+                </button>
+
+
                 <h1>
                     NEXUS
                 </h1>
@@ -281,16 +318,13 @@
 
                 <div class="topbar-actions">
 
-
                     <button>
                         🔔
                     </button>
 
-
                     <button>
                         ⚙️
                     </button>
-
 
                 </div>
 
@@ -313,7 +347,7 @@
                 <div class="welcome">
 
                     <h2>
-                        Olá! 
+                        Olá!
                     </h2>
 
                     <p>
@@ -440,7 +474,6 @@
 
                 <div class="project-summary">
 
-
                     <span>
 
                         🟡
@@ -466,7 +499,6 @@
 
                     </span>
 
-
                 </div>
 
 
@@ -487,7 +519,6 @@
 
                         <div class="dashboard-card-header">
 
-
                             <div>
 
                                 <h3>
@@ -505,12 +536,13 @@
                                 Ver todas →
                             </a>
 
-
                         </div>
 
 
-                        <div id="recent-notes" class="dashboard-list">
-
+                        <div
+                            id="recent-notes"
+                            class="dashboard-list"
+                        >
 
                             <div class="dashboard-empty">
 
@@ -523,7 +555,6 @@
                                 </p>
 
                             </div>
-
 
                         </div>
 
@@ -540,7 +571,6 @@
 
 
                         <div class="dashboard-card-header">
-
 
                             <div>
 
@@ -559,12 +589,13 @@
                                 Ver todas →
                             </a>
 
-
                         </div>
 
 
-                        <div id="recent-achievements" class="dashboard-list">
-
+                        <div
+                            id="recent-achievements"
+                            class="dashboard-list"
+                        >
 
                             <div class="dashboard-empty">
 
@@ -577,7 +608,6 @@
                                 </p>
 
                             </div>
-
 
                         </div>
 
@@ -594,7 +624,6 @@
 
 
                         <div class="dashboard-card-header">
-
 
                             <div>
 
@@ -613,35 +642,33 @@
                                 Ver todos →
                             </a>
 
-
                         </div>
 
 
-                        <div id="dashboard-birthdays" class="dashboard-list">
-
+                        <div
+                            id="dashboard-birthdays"
+                            class="dashboard-list"
+                        >
 
                             <div class="dashboard-empty">
-
 
                                 <div>
                                     🎂
                                 </div>
-
 
                                 <p>
                                     Nenhum aniversariante cadastrado.
                                 </p>
 
 
-                                <a href="./pages/aniversariantes.html" class="dashboard-birthday-add">
-
+                                <a
+                                    href="./pages/aniversariantes.html"
+                                    class="dashboard-birthday-add"
+                                >
                                     + Adicionar aniversariante
-
                                 </a>
 
-
                             </div>
-
 
                         </div>
 
@@ -658,7 +685,6 @@
 
 
                         <div class="dashboard-card-header">
-
 
                             <div>
 
@@ -677,12 +703,13 @@
                                 Ver todos →
                             </a>
 
-
                         </div>
 
 
-                        <div id="recent-projects" class="dashboard-list">
-
+                        <div
+                            id="recent-projects"
+                            class="dashboard-list"
+                        >
 
                             <div class="dashboard-empty">
 
@@ -695,7 +722,6 @@
                                 </p>
 
                             </div>
-
 
                         </div>
 
@@ -713,9 +739,13 @@
 
                 <div class="quick-buttons">
 
+
                     <!-- NOVA NOTA -->
 
-                    <a href="./pages/notas.html?novo=true" class="quick-button">
+                    <a
+                        href="./pages/notas.html?novo=true"
+                        class="quick-button"
+                    >
 
                         <span>
                             📝
@@ -729,7 +759,10 @@
 
                     <!-- NOVA CONQUISTA -->
 
-                    <a href="./pages/conquistas.html?novo=true" class="quick-button">
+                    <a
+                        href="./pages/conquistas.html?novo=true"
+                        class="quick-button"
+                    >
 
                         <span>
                             🏆
@@ -743,7 +776,10 @@
 
                     <!-- NOVO PROJETO -->
 
-                    <a href="./pages/projetos.html?novo=true" class="quick-button">
+                    <a
+                        href="./pages/projetos.html?novo=true"
+                        class="quick-button"
+                    >
 
                         <span>
                             🚀
@@ -757,7 +793,10 @@
 
                     <!-- NOVO ANIVERSÁRIO -->
 
-                    <a href="./pages/aniversariantes.html?novo=true" class="quick-button">
+                    <a
+                        href="./pages/aniversariantes.html?novo=true"
+                        class="quick-button"
+                    >
 
                         <span>
                             🎂
@@ -771,26 +810,62 @@
                 </div>
 
 
+            </section>
 
-                <!-- ================================= -->
-                <!-- JAVASCRIPT -->
-                <!-- ================================= -->
 
-                <script src="./js/dashboard.js"></script>
+        </main>
 
-<script>
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("./service-worker.js")
-                .then(() => {
-                    console.log("Nexus PWA: Service Worker registrado!");
-                })
-                .catch(error => {
-                    console.error("Erro ao registrar Service Worker:", error);
-                });
-        });
-    }
-</script>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ================================= -->
+
+    <script src="./js/dashboard.js"></script>
+
+
+    <!-- SERVICE WORKER / PWA -->
+
+    <script>
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener("load", () => {
+
+                navigator.serviceWorker
+                    .register("./service-worker.js")
+
+                    .then(() => {
+
+                        console.log(
+                            "Nexus PWA: Service Worker registrado!"
+                        );
+
+                    })
+
+                    .catch(error => {
+
+                        console.error(
+                            "Erro ao registrar Service Worker:",
+                            error
+                        );
+
+                    });
+
+            });
+
+        }
+
+    </script>
+
+
+    <!-- MENU MOBILE -->
+
+    <script src="./js/menu.js"></script>
+
 
 </body>
 
