@@ -4,7 +4,7 @@ console.log("NEXUS — Notas iniciado!");
 // CONFIGURAÇÃO DA API
 // ======================================================
 
-const API_URL = "https://nexus-api-kdu5.onrender.com";
+const API_URL = "https://nexus-api-kdu5.onrender.com/api/notas";
 
 // ======================================================
 // ELEMENTOS
