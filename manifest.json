@@ -1,0 +1,17 @@
+{
+  "name": "Nexus",
+  "short_name": "Nexus",
+  "description": "Organização pessoal",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#a855f7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/img/logo-nexus.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
