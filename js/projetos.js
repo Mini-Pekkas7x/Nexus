@@ -1,17 +1,23 @@
 console.log("NEXUS — Projetos iniciado!");
 
+// =================================
+// CONFIGURAÇÃO DA API
+// =================================
 
-// =============================
+const API_URL =
+    "http://localhost:3000/api/projetos";
+
+// =================================
 // ELEMENTOS
-// =============================
+// =================================
 
 const newProjectButton =
     document.getElementById("new-project-button");
 
-const projectModal =
+const modal =
     document.getElementById("project-modal");
 
-const closeProjectModal =
+const closeModal =
     document.getElementById("close-project-modal");
 
 const cancelProject =
@@ -35,128 +41,202 @@ const progressInput =
 const progressValue =
     document.getElementById("progress-value");
 
-
-// =============================
+// =================================
 // DADOS
-// =============================
+// =================================
 
-let projects =
-    NexusStorage.buscar("projetos");
+let projects = [];
 
+// =================================
+// ABRIR MODAL — NOVO PROJETO
+// =================================
 
-// =============================
-// ABRIR MODAL
-// =============================
+function openProjectModal() {
 
-newProjectButton.addEventListener(
-    "click",
-    function () {
+    document.getElementById(
+        "project-modal-title"
+    ).textContent = "Novo projeto";
 
-        document.getElementById(
-            "project-modal-title"
-        ).textContent = "Novo projeto";
+    projectForm.reset();
 
-        projectForm.reset();
+    document.getElementById(
+        "project-id"
+    ).value = "";
 
-        document.getElementById(
-            "project-id"
-        ).value = "";
+    // Status padrão
 
-        progressInput.value = 0;
+    document.getElementById(
+        "project-status"
+    ).value = "planning";
 
-        progressValue.textContent = "0%";
+    // Progresso padrão
 
-        projectModal.classList.remove("hidden");
+    progressInput.value = 0;
 
-    }
-);
+    progressValue.textContent = "0%";
 
+    modal.classList.remove("hidden");
+}
 
-// =============================
+// =================================
 // FECHAR MODAL
-// =============================
+// =================================
 
-closeProjectModal.addEventListener(
-    "click",
-    function () {
+function closeProjectModal() {
 
-        projectModal.classList.add("hidden");
+    modal.classList.add("hidden");
 
+    projectForm.reset();
+
+    document.getElementById(
+        "project-id"
+    ).value = "";
+
+    progressInput.value = 0;
+
+    progressValue.textContent = "0%";
+}
+
+// =================================
+// EVENTOS DOS BOTÕES
+// =================================
+
+if (newProjectButton) {
+
+    newProjectButton.addEventListener(
+        "click",
+        openProjectModal
+    );
+}
+
+if (closeModal) {
+
+    closeModal.addEventListener(
+        "click",
+        closeProjectModal
+    );
+}
+
+if (cancelProject) {
+
+    cancelProject.addEventListener(
+        "click",
+        closeProjectModal
+    );
+}
+
+// =================================
+// ATUALIZAR PROGRESSO
+// =================================
+
+if (progressInput) {
+
+    progressInput.addEventListener(
+        "input",
+        function () {
+
+            progressValue.textContent =
+                `${progressInput.value}%`;
+
+        }
+    );
+}
+
+// =================================
+// CARREGAR PROJETOS
+// =================================
+
+async function loadProjects() {
+
+    try {
+
+        const response =
+            await fetch(API_URL);
+
+        const result =
+            await response.json();
+
+        console.log(
+            "Resposta da API:",
+            result
+        );
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao carregar projetos."
+            );
+
+        }
+
+        projects =
+            result.projetos || [];
+
+        renderProjects();
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar projetos:",
+            error
+        );
+
+        projectsContainer.innerHTML = `
+
+            <div class="project-empty">
+
+                <div>
+                    ⚠️
+                </div>
+
+                <h3>
+                    Não foi possível carregar
+                </h3>
+
+                <p>
+                    Verifique se o backend do NEXUS está funcionando.
+                </p>
+
+            </div>
+
+        `;
     }
-);
+}
 
-
-cancelProject.addEventListener(
-    "click",
-    function () {
-
-        projectModal.classList.add("hidden");
-
-    }
-);
-
-
-// =============================
-// PROGRESSO
-// =============================
-
-progressInput.addEventListener(
-    "input",
-    function () {
-
-        progressValue.textContent =
-            `${progressInput.value}%`;
-
-    }
-);
-
-
-// =============================
+// =================================
 // SALVAR PROJETO
-// =============================
+// =================================
 
 projectForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
-
 
         const id =
             document.getElementById(
                 "project-id"
             ).value;
 
-
         const title =
             document.getElementById(
                 "project-title"
             ).value.trim();
-
 
         const status =
             document.getElementById(
                 "project-status"
             ).value;
 
-
         const description =
             document.getElementById(
                 "project-description"
             ).value.trim();
-
-
-        const startDate =
-            document.getElementById(
-                "project-start"
-            ).value;
-
-
-        const deadline =
-            document.getElementById(
-                "project-deadline"
-            ).value;
-
 
         const progress =
             Number(
@@ -165,6 +245,9 @@ projectForm.addEventListener(
                 ).value
             );
 
+        // =================================
+        // VALIDAR
+        // =================================
 
         if (
             !title ||
@@ -176,202 +259,220 @@ projectForm.addEventListener(
             );
 
             return;
-
         }
 
+        try {
 
-        // =============================
-        // EDITAR
-        // =============================
+            let response;
 
-        if (id) {
+            // =================================
+            // EDITAR
+            // =================================
 
-            const project =
-                projects.find(
-                    function (project) {
+            if (id) {
 
-                        return project.id === id;
+                response =
+                    await fetch(
+                        `${API_URL}/${id}`,
+                        {
 
-                    }
-                );
+                            method: "PUT",
 
+                            headers: {
 
-            if (project) {
+                                "Content-Type":
+                                    "application/json"
 
-                project.title =
-                    title;
+                            },
 
-                project.status =
-                    status;
+                            body:
+                                JSON.stringify({
 
-                project.description =
-                    description;
+                                    title:
+                                        title,
 
-                project.startDate =
-                    startDate;
+                                    description:
+                                        description,
 
-                project.deadline =
-                    deadline;
+                                    status:
+                                        status,
 
-                project.progress =
-                    progress;
+                                    progress:
+                                        progress
 
-                project.updatedAt =
-                    new Date().toISOString();
+                                })
+
+                        }
+                    );
 
             }
 
-        }
+            // =================================
+            // CRIAR
+            // =================================
 
+            else {
 
-        // =============================
-        // CRIAR
-        // =============================
+                response =
+                    await fetch(
+                        API_URL,
+                        {
 
-        else {
+                            method: "POST",
 
-            const newProject = {
+                            headers: {
 
-                id:
-                    crypto.randomUUID(),
+                                "Content-Type":
+                                    "application/json"
 
-                title:
-                    title,
+                            },
 
-                status:
-                    status,
+                            body:
+                                JSON.stringify({
 
-                description:
-                    description,
+                                    title:
+                                        title,
 
-                startDate:
-                    startDate,
+                                    description:
+                                        description,
 
-                deadline:
-                    deadline,
+                                    status:
+                                        status,
 
-                progress:
-                    progress,
+                                    progress:
+                                        progress
 
-                createdAt:
-                    new Date().toISOString(),
+                                })
 
-                updatedAt:
-                    new Date().toISOString()
+                        }
+                    );
+            }
 
-            };
+            const result =
+                await response.json();
 
-
-            projects.unshift(
-                newProject
+            console.log(
+                "Resposta ao salvar:",
+                result
             );
 
+            if (
+                !response.ok ||
+                !result.sucesso
+            ) {
+
+                throw new Error(
+                    result.erro ||
+                    result.mensagem ||
+                    "Erro ao salvar projeto."
+                );
+            }
+
+            closeProjectModal();
+
+            await loadProjects();
+
+            alert(
+                id
+                    ? "Projeto atualizado! ✏️"
+                    : "Projeto criado! 🚀"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao salvar projeto:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Não foi possível salvar o projeto."
+            );
         }
-
-
-        // =============================
-        // SALVAR
-        // =============================
-
-        NexusStorage.salvar(
-            "projetos",
-            projects
-        );
-
-
-        projectForm.reset();
-
-        document.getElementById(
-            "project-id"
-        ).value = "";
-
-        progressInput.value = 0;
-
-        progressValue.textContent = "0%";
-
-        projectModal.classList.add("hidden");
-
-
-        renderProjects();
 
     }
 );
 
-
-// =============================
+// =================================
 // RENDERIZAR PROJETOS
-// =============================
+// =================================
 
 function renderProjects() {
 
     const search =
-        searchProjects.value
-            .toLowerCase()
-            .trim();
-
+        searchProjects
+            ? searchProjects.value
+                .toLowerCase()
+                .trim()
+            : "";
 
     const statusFilter =
-        filterProjectStatus.value;
-
+        filterProjectStatus
+            ? filterProjectStatus.value
+            : "all";
 
     let filteredProjects =
         projects.filter(
             function (project) {
 
+                const title =
+                    project.title || "";
+
+                const description =
+                    project.description || "";
+
                 const matchesSearch =
-                    project.title
+                    title
                         .toLowerCase()
                         .includes(search)
                     ||
-                    project.description
+                    description
                         .toLowerCase()
                         .includes(search);
-
 
                 const matchesStatus =
                     statusFilter === "all"
                     ||
                     project.status === statusFilter;
 
-
                 return (
                     matchesSearch &&
                     matchesStatus
                 );
-
             }
         );
 
-
-    // Mais recentes primeiro
+    // =================================
+    // MAIS RECENTES PRIMEIRO
+    // =================================
 
     filteredProjects.sort(
         function (a, b) {
 
             const dateA =
                 new Date(
-                    a.updatedAt ||
-                    a.createdAt
+                    a.updated_at ||
+                    a.created_at ||
+                    0
                 );
 
             const dateB =
                 new Date(
-                    b.updatedAt ||
-                    b.createdAt
+                    b.updated_at ||
+                    b.created_at ||
+                    0
                 );
 
             return dateB - dateA;
-
         }
     );
 
-
     projectsContainer.innerHTML = "";
 
-
-    // =============================
+    // =================================
     // NENHUM PROJETO
-    // =============================
+    // =================================
 
     if (
         filteredProjects.length === 0
@@ -398,13 +499,11 @@ function renderProjects() {
         `;
 
         return;
-
     }
 
-
-    // =============================
+    // =================================
     // CARDS
-    // =============================
+    // =================================
 
     filteredProjects.forEach(
         function (project) {
@@ -414,42 +513,61 @@ function renderProjects() {
                     "article"
                 );
 
-
             card.className =
                 "project-card";
 
-
-            const statusInfo =
-                getStatusInfo(
-                    project.status
+            const progress =
+                Number(
+                    project.progress || 0
                 );
-
 
             card.innerHTML = `
 
                 <div class="project-card-header">
 
-                    <h3>
-                        ${escapeHTML(
-                            project.title
-                        )}
-                    </h3>
+                    <div class="project-icon">
+                        🚀
+                    </div>
 
-                    <span
-                        class="project-status ${project.status}"
-                    >
-                        ${statusInfo.label}
-                    </span>
+                    <div class="project-actions">
+
+                        <button
+                            type="button"
+                            onclick="editProject('${project.id}')"
+                            title="Editar"
+                        >
+                            ✏️
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="deleteProject('${project.id}')"
+                            title="Excluir"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
 
                 </div>
 
 
-                <p class="project-description">
-
+                <h3>
                     ${escapeHTML(
-                        project.description
+                        project.title
                     )}
+                </h3>
 
+
+                <span class="project-status ${getStatusClass(project.status)}">
+                    ${getStatusLabel(project.status)}
+                </span>
+
+
+                <p class="project-description">
+                    ${escapeHTML(
+                        project.description || ""
+                    )}
                 </p>
 
 
@@ -462,7 +580,7 @@ function renderProjects() {
                         </span>
 
                         <strong>
-                            ${project.progress}%
+                            ${progress}%
                         </strong>
 
                     </div>
@@ -472,7 +590,7 @@ function renderProjects() {
 
                         <div
                             class="progress-bar-fill"
-                            style="width: ${project.progress}%"
+                            style="width: ${progress}%"
                         ></div>
 
                     </div>
@@ -480,101 +598,29 @@ function renderProjects() {
                 </div>
 
 
-                <div class="project-dates-info">
+                <div class="project-footer">
 
                     <span>
-                        📅 Início:
+                        📅
                         ${formatDate(
-                            project.startDate
+                            project.created_at
                         )}
                     </span>
-
-                    <span>
-                        🏁 Prazo:
-                        ${formatDate(
-                            project.deadline
-                        )}
-                    </span>
-
-                </div>
-
-
-                <div class="project-card-footer">
-
-                    <span></span>
-
-                    <div class="project-actions">
-
-                        <button
-                            onclick="editProject('${project.id}')"
-                            title="Editar"
-                        >
-                            ✏️
-                        </button>
-
-
-                        <button
-                            onclick="deleteProject('${project.id}')"
-                            title="Excluir"
-                        >
-                            🗑️
-                        </button>
-
-                    </div>
 
                 </div>
 
             `;
 
-
             projectsContainer.appendChild(
                 card
             );
-
         }
     );
-
 }
 
-
-// =============================
-// STATUS
-// =============================
-
-function getStatusInfo(status) {
-
-    const statuses = {
-
-        planning: {
-            label: "📋 Planejamento"
-        },
-
-        progress: {
-            label: "🟡 Em andamento"
-        },
-
-        completed: {
-            label: "🟢 Concluído"
-        },
-
-        paused: {
-            label: "⏸️ Pausado"
-        }
-
-    };
-
-
-    return (
-        statuses[status] ||
-        statuses.planning
-    );
-
-}
-
-
-// =============================
-// EDITAR
-// =============================
+// =================================
+// EDITAR PROJETO
+// =================================
 
 function editProject(id) {
 
@@ -582,198 +628,281 @@ function editProject(id) {
         projects.find(
             function (project) {
 
-                return project.id === id;
+                return String(
+                    project.id
+                ) === String(id);
 
             }
         );
 
+    if (!project) {
 
-    if (!project) return;
-
+        return;
+    }
 
     document.getElementById(
         "project-modal-title"
     ).textContent =
         "Editar projeto";
 
-
     document.getElementById(
         "project-id"
     ).value =
         project.id;
 
-
     document.getElementById(
         "project-title"
     ).value =
-        project.title;
-
+        project.title || "";
 
     document.getElementById(
         "project-status"
     ).value =
-        project.status;
-
+        project.status || "planning";
 
     document.getElementById(
         "project-description"
     ).value =
-        project.description;
+        project.description || "";
 
-
-    document.getElementById(
-        "project-start"
-    ).value =
-        project.startDate || "";
-
-
-    document.getElementById(
-        "project-deadline"
-    ).value =
-        project.deadline || "";
-
-
-    progressInput.value =
-        project.progress || 0;
-
-
-    progressValue.textContent =
-        `${project.progress || 0}%`;
-
-
-    projectModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-// =============================
-// EXCLUIR
-// =============================
-
-function deleteProject(id) {
-
-    const confirmDelete =
-        confirm(
-            "Deseja realmente excluir este projeto?"
+    const progress =
+        Number(
+            project.progress || 0
         );
 
+    document.getElementById(
+        "project-progress"
+    ).value =
+        progress;
 
-    if (!confirmDelete) return;
+    progressValue.textContent =
+        `${progress}%`;
 
+    modal.classList.remove(
+        "hidden"
+    );
+}
 
-    projects =
-        projects.filter(
+// =================================
+// EXCLUIR PROJETO
+// =================================
+
+async function deleteProject(id) {
+
+    const project =
+        projects.find(
             function (project) {
 
-                return project.id !== id;
+                return String(
+                    project.id
+                ) === String(id);
 
             }
         );
 
+    if (!project) {
 
-    NexusStorage.salvar(
-        "projetos",
-        projects
-    );
+        return;
+    }
 
+    const confirmDelete =
+        confirm(
+            `Deseja realmente excluir "${project.title}"?`
+        );
 
-    renderProjects();
+    if (!confirmDelete) {
 
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/${id}`,
+                {
+
+                    method: "DELETE"
+
+                }
+            );
+
+        const result =
+            await response.json();
+
+        console.log(
+            "Resposta ao excluir:",
+            result
+        );
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao excluir projeto."
+            );
+        }
+
+        await loadProjects();
+
+        alert(
+            "Projeto excluído! 🗑️"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir projeto:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Não foi possível excluir o projeto."
+        );
+    }
 }
 
-
-// =============================
+// =================================
 // PESQUISA
-// =============================
+// =================================
 
-searchProjects.addEventListener(
-    "input",
-    renderProjects
-);
+if (searchProjects) {
 
+    searchProjects.addEventListener(
+        "input",
+        renderProjects
+    );
+}
 
-filterProjectStatus.addEventListener(
-    "change",
-    renderProjects
-);
+// =================================
+// FILTRO DE STATUS
+// =================================
 
+if (filterProjectStatus) {
 
-// =============================
-// UTILIDADES
-// =============================
+    filterProjectStatus.addEventListener(
+        "change",
+        renderProjects
+    );
+}
+
+// =================================
+// FORMATAR DATA
+// =================================
 
 function formatDate(date) {
 
     if (!date) {
 
-        return "Não definida";
-
+        return "";
     }
 
-
     return new Date(
-        date + "T00:00:00"
+        date
     ).toLocaleDateString(
         "pt-BR"
     );
-
 }
 
+// =================================
+// STATUS
+// =================================
+
+function getStatusLabel(status) {
+
+    switch (status) {
+
+        case "planning":
+            return "📋 Planejamento";
+
+        case "progress":
+            return "🟡 Em andamento";
+
+        case "completed":
+            return "🟢 Concluído";
+
+        case "paused":
+            return "⏸️ Pausado";
+
+        default:
+            return "📋 Planejamento";
+    }
+}
+
+function getStatusClass(status) {
+
+    switch (status) {
+
+        case "planning":
+            return "status-planning";
+
+        case "progress":
+            return "status-progress";
+
+        case "completed":
+            return "status-completed";
+
+        case "paused":
+            return "status-paused";
+
+        default:
+            return "status-planning";
+    }
+}
+
+// =================================
+// SEGURANÇA
+// =================================
 
 function escapeHTML(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    div.textContent = text;
+    div.textContent =
+        text || "";
 
     return div.innerHTML;
-
 }
 
-
-// =============================
+// =================================
 // INICIAR
-// =============================
+// =================================
 
-renderProjects();
+loadProjects();
 
-// =============================
-// ABRIR MODAL PELO DASHBOARD
-// =============================
+// =================================
+// ABRIR PELO DASHBOARD
+// =================================
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
+if (
+    params.get("novo") === "true"
+) {
 
-if (params.get("novo") === "true") {
+    if (newProjectButton) {
 
-    document.getElementById(
-        "project-modal-title"
-    ).textContent =
-        "Novo projeto";
-
-
-    projectForm.reset();
-
-
-    document.getElementById(
-        "project-id"
-    ).value = "";
-
-
-    progressInput.value = 0;
-
-    progressValue.textContent =
-        "0%";
-
-
-    projectModal.classList.remove(
-        "hidden"
-    );
-
+        newProjectButton.click();
+    }
 }
+
+// =================================
+// EXPOR FUNÇÕES
+// =================================
+
+window.editProject =
+    editProject;
+
+window.deleteProject =
+    deleteProject;

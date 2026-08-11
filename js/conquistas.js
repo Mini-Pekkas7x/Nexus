@@ -1,106 +1,238 @@
 console.log("NEXUS — Conquistas iniciado!");
 
+// =================================
+// CONFIGURAÇÃO DA API
+// =================================
 
-// =============================
+const API_URL =
+    "http://localhost:3000/api/conquistas";
+
+
+// =================================
 // ELEMENTOS
-// =============================
+// =================================
 
 const newAchievementButton =
-    document.getElementById("new-achievement-button");
+    document.getElementById(
+        "new-achievement-button"
+    );
 
 const modal =
-    document.getElementById("achievement-modal");
+    document.getElementById(
+        "achievement-modal"
+    );
 
 const closeModal =
-    document.getElementById("close-achievement-modal");
+    document.getElementById(
+        "close-achievement-modal"
+    );
 
 const cancelAchievement =
-    document.getElementById("cancel-achievement");
+    document.getElementById(
+        "cancel-achievement"
+    );
 
 const achievementForm =
-    document.getElementById("achievement-form");
+    document.getElementById(
+        "achievement-form"
+    );
 
 const achievementsContainer =
-    document.getElementById("achievements-container");
+    document.getElementById(
+        "achievements-container"
+    );
 
 const searchAchievements =
-    document.getElementById("search-achievements");
+    document.getElementById(
+        "search-achievements"
+    );
 
 const filterCategory =
-    document.getElementById("filter-achievement-category");
+    document.getElementById(
+        "filter-achievement-category"
+    );
 
 
-// =============================
+// =================================
 // DADOS
-// =============================
+// =================================
 
-let achievements =
-    NexusStorage.buscar("conquistas");
-
-
-// =============================
-// ABRIR MODAL
-// =============================
-
-newAchievementButton.addEventListener(
-    "click",
-    function () {
-
-        document.getElementById(
-            "achievement-modal-title"
-        ).textContent = "Nova conquista";
-
-        achievementForm.reset();
-
-        document.getElementById(
-            "achievement-id"
-        ).value = "";
-
-        // Coloca a data de hoje
-        document.getElementById(
-            "achievement-date"
-        ).value =
-            new Date()
-                .toISOString()
-                .split("T")[0];
-
-        modal.classList.remove("hidden");
-
-    }
-);
+let achievements = [];
 
 
-// =============================
+// =================================
+// ABRIR MODAL — NOVA CONQUISTA
+// =================================
+
+function openAchievementModal() {
+
+    document.getElementById(
+        "achievement-modal-title"
+    ).textContent =
+        "Nova conquista";
+
+
+    achievementForm.reset();
+
+
+    document.getElementById(
+        "achievement-id"
+    ).value = "";
+
+
+    // Coloca a data de hoje
+
+    document.getElementById(
+        "achievement-date"
+    ).value =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+// =================================
 // FECHAR MODAL
-// =============================
+// =================================
 
-closeModal.addEventListener(
-    "click",
-    function () {
+function closeAchievementModal() {
 
-        modal.classList.add("hidden");
+    modal.classList.add(
+        "hidden"
+    );
+
+    achievementForm.reset();
+
+    document.getElementById(
+        "achievement-id"
+    ).value = "";
+
+}
+
+
+// =================================
+// EVENTOS DOS BOTÕES
+// =================================
+
+if (newAchievementButton) {
+
+    newAchievementButton.addEventListener(
+        "click",
+        openAchievementModal
+    );
+
+}
+
+
+if (closeModal) {
+
+    closeModal.addEventListener(
+        "click",
+        closeAchievementModal
+    );
+
+}
+
+
+if (cancelAchievement) {
+
+    cancelAchievement.addEventListener(
+        "click",
+        closeAchievementModal
+    );
+
+}
+
+
+// =================================
+// CARREGAR CONQUISTAS
+// =================================
+
+async function loadAchievements() {
+
+    try {
+
+        const response =
+            await fetch(API_URL);
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "Resposta da API:",
+            result
+        );
+
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao carregar conquistas."
+            );
+
+        }
+
+
+        achievements =
+            result.conquistas || [];
+
+
+        renderAchievements();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar conquistas:",
+            error
+        );
+
+
+        achievementsContainer.innerHTML = `
+
+            <div class="achievement-empty">
+
+                <div>
+                    ⚠️
+                </div>
+
+                <h3>
+                    Não foi possível carregar
+                </h3>
+
+                <p>
+                    Verifique se o backend do NEXUS está funcionando.
+                </p>
+
+            </div>
+
+        `;
 
     }
-);
+
+}
 
 
-cancelAchievement.addEventListener(
-    "click",
-    function () {
-
-        modal.classList.add("hidden");
-
-    }
-);
-
-
-// =============================
-// SALVAR
-// =============================
+// =================================
+// SALVAR CONQUISTA
+// =================================
 
 achievementForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
@@ -135,6 +267,10 @@ achievementForm.addEventListener(
             ).value.trim();
 
 
+        // =================================
+        // VALIDAR
+        // =================================
+
         if (
             !title ||
             !date ||
@@ -150,135 +286,197 @@ achievementForm.addEventListener(
         }
 
 
-        // =============================
-        // EDITAR
-        // =============================
+        try {
 
-        if (id) {
-
-            const achievement =
-                achievements.find(
-                    function (achievement) {
-
-                        return achievement.id === id;
-
-                    }
-                );
+            let response;
 
 
-            if (achievement) {
+            // =================================
+            // EDITAR
+            // =================================
 
-                achievement.title =
-                    title;
+            if (id) {
 
-                achievement.category =
-                    category;
+                response =
+                    await fetch(
+                        `${API_URL}/${id}`,
+                        {
 
-                achievement.date =
-                    date;
+                            method: "PUT",
 
-                achievement.description =
-                    description;
+                            headers: {
 
-                achievement.updatedAt =
-                    new Date().toISOString();
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    title:
+                                        title,
+
+                                    category:
+                                        category,
+
+                                    date:
+                                        date,
+
+                                    description:
+                                        description
+
+                                })
+
+                        }
+                    );
 
             }
 
-        }
+
+            // =================================
+            // CRIAR
+            // =================================
+
+            else {
+
+                response =
+                    await fetch(
+                        API_URL,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    title:
+                                        title,
+
+                                    category:
+                                        category,
+
+                                    date:
+                                        date,
+
+                                    description:
+                                        description
+
+                                })
+
+                        }
+                    );
+
+            }
 
 
-        // =============================
-        // CRIAR
-        // =============================
-
-        else {
-
-            const newAchievement = {
-
-                id:
-                    crypto.randomUUID(),
-
-                title:
-                    title,
-
-                category:
-                    category,
-
-                date:
-                    date,
-
-                description:
-                    description,
-
-                createdAt:
-                    new Date().toISOString(),
-
-                updatedAt:
-                    new Date().toISOString()
-
-            };
+            const result =
+                await response.json();
 
 
-            achievements.unshift(
-                newAchievement
+            console.log(
+                "Resposta ao salvar:",
+                result
+            );
+
+
+            if (
+                !response.ok ||
+                !result.sucesso
+            ) {
+
+                throw new Error(
+                    result.erro ||
+                    result.mensagem ||
+                    "Erro ao salvar conquista."
+                );
+
+            }
+
+
+            // =================================
+            // FINALIZAR
+            // =================================
+
+            closeAchievementModal();
+
+
+            await loadAchievements();
+
+
+            alert(
+                id
+                    ? "Conquista atualizada! ✏️"
+                    : "Conquista criada! 🏆"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao salvar conquista:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Não foi possível salvar a conquista."
             );
 
         }
-
-
-        // =============================
-        // SALVAR
-        // =============================
-
-        NexusStorage.salvar(
-            "conquistas",
-            achievements
-        );
-
-
-        achievementForm.reset();
-
-        document.getElementById(
-            "achievement-id"
-        ).value = "";
-
-
-        modal.classList.add("hidden");
-
-
-        renderAchievements();
 
     }
 );
 
 
-// =============================
-// RENDERIZAR
-// =============================
+// =================================
+// RENDERIZAR CONQUISTAS
+// =================================
 
 function renderAchievements() {
 
     const search =
-        searchAchievements.value
-            .toLowerCase()
-            .trim();
+        searchAchievements
+            ? searchAchievements.value
+                .toLowerCase()
+                .trim()
+            : "";
 
 
     const category =
-        filterCategory.value;
+        filterCategory
+            ? filterCategory.value
+            : "all";
 
 
     let filteredAchievements =
         achievements.filter(
             function (achievement) {
 
+                const title =
+                    achievement.title ||
+                    "";
+
+
+                const description =
+                    achievement.description ||
+                    "";
+
+
                 const matchesSearch =
-                    achievement.title
+                    title
                         .toLowerCase()
                         .includes(search)
                     ||
-                    achievement.description
+                    description
                         .toLowerCase()
                         .includes(search);
 
@@ -286,7 +484,8 @@ function renderAchievements() {
                 const matchesCategory =
                     category === "all"
                     ||
-                    achievement.category === category;
+                    achievement.category ===
+                        category;
 
 
                 return (
@@ -298,22 +497,28 @@ function renderAchievements() {
         );
 
 
-    // Mais recentes primeiro
+    // =================================
+    // MAIS RECENTES PRIMEIRO
+    // =================================
 
     filteredAchievements.sort(
         function (a, b) {
 
             const dateA =
                 new Date(
-                    a.updatedAt ||
-                    a.createdAt
+                    a.updated_at ||
+                    a.created_at ||
+                    0
                 );
+
 
             const dateB =
                 new Date(
-                    b.updatedAt ||
-                    b.createdAt
+                    b.updated_at ||
+                    b.created_at ||
+                    0
                 );
+
 
             return dateB - dateA;
 
@@ -321,12 +526,13 @@ function renderAchievements() {
     );
 
 
-    achievementsContainer.innerHTML = "";
+    achievementsContainer.innerHTML =
+        "";
 
 
-    // =============================
+    // =================================
     // NENHUMA CONQUISTA
-    // =============================
+    // =================================
 
     if (
         filteredAchievements.length === 0
@@ -357,9 +563,9 @@ function renderAchievements() {
     }
 
 
-    // =============================
-    // CARDS
-    // =============================
+    // =================================
+    // CRIAR CARDS
+    // =================================
 
     filteredAchievements.forEach(
         function (achievement) {
@@ -390,14 +596,16 @@ function renderAchievements() {
 
                 <span class="achievement-category">
                     ${escapeHTML(
-                        achievement.category
+                        achievement.category ||
+                        ""
                     )}
                 </span>
 
 
                 <p class="achievement-description">
                     ${escapeHTML(
-                        achievement.description
+                        achievement.description ||
+                        ""
                     )}
                 </p>
 
@@ -415,6 +623,7 @@ function renderAchievements() {
                     <div class="achievement-actions">
 
                         <button
+                            type="button"
                             onclick="editAchievement('${achievement.id}')"
                             title="Editar"
                         >
@@ -423,6 +632,7 @@ function renderAchievements() {
 
 
                         <button
+                            type="button"
                             onclick="deleteAchievement('${achievement.id}')"
                             title="Excluir"
                         >
@@ -446,9 +656,9 @@ function renderAchievements() {
 }
 
 
-// =============================
-// EDITAR
-// =============================
+// =================================
+// EDITAR CONQUISTA
+// =================================
 
 function editAchievement(id) {
 
@@ -456,13 +666,19 @@ function editAchievement(id) {
         achievements.find(
             function (achievement) {
 
-                return achievement.id === id;
+                return String(
+                    achievement.id
+                ) === String(id);
 
             }
         );
 
 
-    if (!achievement) return;
+    if (!achievement) {
+
+        return;
+
+    }
 
 
     document.getElementById(
@@ -480,89 +696,175 @@ function editAchievement(id) {
     document.getElementById(
         "achievement-title"
     ).value =
-        achievement.title;
+        achievement.title || "";
 
 
     document.getElementById(
         "achievement-category"
     ).value =
-        achievement.category;
+        achievement.category || "Outros";
 
 
     document.getElementById(
         "achievement-date"
     ).value =
-        achievement.date;
+        achievement.date || "";
 
 
     document.getElementById(
         "achievement-description"
     ).value =
-        achievement.description;
+        achievement.description || "";
 
 
-    modal.classList.remove("hidden");
+    modal.classList.remove(
+        "hidden"
+    );
 
 }
 
 
-// =============================
-// EXCLUIR
-// =============================
+// =================================
+// EXCLUIR CONQUISTA
+// =================================
 
-function deleteAchievement(id) {
+async function deleteAchievement(id) {
 
-    const confirmDelete =
-        confirm(
-            "Deseja realmente excluir esta conquista?"
-        );
-
-
-    if (!confirmDelete) return;
-
-
-    achievements =
-        achievements.filter(
+    const achievement =
+        achievements.find(
             function (achievement) {
 
-                return achievement.id !== id;
+                return String(
+                    achievement.id
+                ) === String(id);
 
             }
         );
 
 
-    NexusStorage.salvar(
-        "conquistas",
-        achievements
-    );
+    if (!achievement) {
+
+        return;
+
+    }
 
 
-    renderAchievements();
+    const confirmDelete =
+        confirm(
+            `Deseja realmente excluir "${achievement.title}"?`
+        );
+
+
+    if (!confirmDelete) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/${id}`,
+                {
+
+                    method: "DELETE"
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "Resposta ao excluir:",
+            result
+        );
+
+
+        if (
+            !response.ok ||
+            !result.sucesso
+        ) {
+
+            throw new Error(
+                result.erro ||
+                result.mensagem ||
+                "Erro ao excluir conquista."
+            );
+
+        }
+
+
+        await loadAchievements();
+
+
+        alert(
+            "Conquista excluída! 🗑️"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir conquista:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Não foi possível excluir a conquista."
+        );
+
+    }
 
 }
 
 
-// =============================
+// =================================
 // PESQUISA
-// =============================
+// =================================
 
-searchAchievements.addEventListener(
-    "input",
-    renderAchievements
-);
+if (searchAchievements) {
 
+    searchAchievements.addEventListener(
+        "input",
+        renderAchievements
+    );
 
-filterCategory.addEventListener(
-    "change",
-    renderAchievements
-);
+}
 
 
-// =============================
-// UTILIDADES
-// =============================
+// =================================
+// FILTRO
+// =================================
+
+if (filterCategory) {
+
+    filterCategory.addEventListener(
+        "change",
+        renderAchievements
+    );
+
+}
+
+
+// =================================
+// FORMATAR DATA
+// =================================
 
 function formatDate(date) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
 
     return new Date(
         date + "T00:00:00"
@@ -573,27 +875,37 @@ function formatDate(date) {
 }
 
 
+// =================================
+// SEGURANÇA
+// =================================
+
 function escapeHTML(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    div.textContent = text;
+
+    div.textContent =
+        text || "";
+
 
     return div.innerHTML;
 
 }
 
 
-// =============================
+// =================================
 // INICIAR
-// =============================
+// =================================
 
-renderAchievements();
+loadAchievements();
 
-// =============================
+
+// =================================
 // ABRIR MODAL PELO DASHBOARD
-// =============================
+// =================================
 
 const params =
     new URLSearchParams(
@@ -601,13 +913,9 @@ const params =
     );
 
 
-if (params.get("novo") === "true") {
-
-    const newAchievementButton =
-        document.getElementById(
-            "new-achievement-button"
-        );
-
+if (
+    params.get("novo") === "true"
+) {
 
     if (newAchievementButton) {
 
@@ -616,3 +924,14 @@ if (params.get("novo") === "true") {
     }
 
 }
+
+
+// =================================
+// EXPOR FUNÇÕES
+// =================================
+
+window.editAchievement =
+    editAchievement;
+
+window.deleteAchievement =
+    deleteAchievement;

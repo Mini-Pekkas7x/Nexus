@@ -1,11 +1,21 @@
 console.log("NEXUS — Dashboard iniciado!");
 
-// =============================
-// ELEMENTOS
-// =============================
+// =================================
+// CONFIGURAÇÃO DA API
+// =================================
 
-const notesCount = document.getElementById("notes-count");
-const recentNotes = document.getElementById("recent-notes");
+const API_BASE_URL =
+    "http://localhost:3000/api";
+
+// =================================
+// ELEMENTOS
+// =================================
+
+const notesCount =
+    document.getElementById("notes-count");
+
+const recentNotes =
+    document.getElementById("recent-notes");
 
 const achievementsCount =
     document.getElementById("achievements-count");
@@ -28,91 +38,282 @@ const projectsCompleted =
 const recentProjects =
     document.getElementById("recent-projects");
 
-    const dashboardBirthdays =
+const dashboardBirthdays =
     document.getElementById("dashboard-birthdays");
 
+// =================================
+// DADOS
+// =================================
 
-// =============================
-// CARREGAR DADOS
-// =============================
+let notes = [];
+let achievements = [];
+let projects = [];
+let birthdays = [];
 
-const notes = NexusStorage.buscar("notas");
-
-const achievements =
-    NexusStorage.buscar("conquistas");
-
-const projects =
-    NexusStorage.buscar("projetos");
-
-const birthdays =
-    NexusStorage.buscar(
-        "aniversariantes"
-    );
-
-
-// =============================
-// CONTADORES
-// =============================
-
-notesCount.textContent = notes.length;
-
-achievementsCount.textContent =
-    achievements.length;
-
-projectsCount.textContent =
-    projects.length;
-
-birthdaysCount.textContent =
-    birthdays.length;
-
-// =============================
-// STATUS DOS PROJETOS
-// =============================
-
-const inProgress =
-    projects.filter(function (project) {
-
-        return project.status === "progress";
-
-    }).length;
-
-
-const completed =
-    projects.filter(function (project) {
-
-        return project.status === "completed";
-
-    }).length;
-
-
-projectsInProgress.textContent =
-    inProgress;
-
-projectsCompleted.textContent =
-    completed;
-
-
-// =============================
-// SEGURANÇA
-// =============================
+// =================================
+// ESCAPE HTML
+// =================================
 
 function escapeHTML(text) {
 
     const div =
         document.createElement("div");
 
-    div.textContent = text || "";
+    div.textContent =
+        text || "";
 
     return div.innerHTML;
+}
+
+// =================================
+// CARREGAR DADOS DA API
+// =================================
+
+async function loadDashboardData() {
+
+    try {
+
+        console.log(
+            "Carregando dados do dashboard..."
+        );
+
+        const [
+            notesResponse,
+            achievementsResponse,
+            projectsResponse,
+            birthdaysResponse
+        ] = await Promise.all([
+
+            fetch(
+                `${API_BASE_URL}/notas`
+            ),
+
+            fetch(
+                `${API_BASE_URL}/conquistas`
+            ),
+
+            fetch(
+                `${API_BASE_URL}/projetos`
+            ),
+
+            fetch(
+                `${API_BASE_URL}/aniversariantes`
+            )
+
+        ]);
+
+
+        // =================================
+        // VERIFICAR RESPOSTAS
+        // =================================
+
+        if (
+            !notesResponse.ok ||
+            !achievementsResponse.ok ||
+            !projectsResponse.ok ||
+            !birthdaysResponse.ok
+        ) {
+
+            throw new Error(
+                "Erro ao carregar dados da API."
+            );
+
+        }
+
+
+        // =================================
+        // CONVERTER JSON
+        // =================================
+
+        const notesResult =
+            await notesResponse.json();
+
+        const achievementsResult =
+            await achievementsResponse.json();
+
+        const projectsResult =
+            await projectsResponse.json();
+
+        const birthdaysResult =
+            await birthdaysResponse.json();
+
+
+        console.log(
+            "Notas:",
+            notesResult
+        );
+
+        console.log(
+            "Conquistas:",
+            achievementsResult
+        );
+
+        console.log(
+            "Projetos:",
+            projectsResult
+        );
+
+        console.log(
+            "Aniversariantes:",
+            birthdaysResult
+        );
+
+
+        // =================================
+        // SALVAR DADOS
+        // =================================
+
+        notes =
+            notesResult.notas || [];
+
+        achievements =
+            achievementsResult.conquistas || [];
+
+        projects =
+            projectsResult.projetos || [];
+
+        birthdays =
+            birthdaysResult.aniversariantes || [];
+
+
+        // =================================
+        // ATUALIZAR CONTADORES
+        // =================================
+
+        updateCounters();
+
+
+        // =================================
+        // RENDERIZAR
+        // =================================
+
+        renderRecentNotes();
+
+        renderRecentAchievements();
+
+        renderRecentProjects();
+
+        renderDashboardBirthdays();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar dashboard:",
+            error
+        );
+
+    }
 
 }
 
+// =================================
+// CONTADORES
+// =================================
 
-// =============================
+function updateCounters() {
+
+    // Notas
+
+    if (notesCount) {
+
+        notesCount.textContent =
+            notes.length;
+
+    }
+
+
+    // Conquistas
+
+    if (achievementsCount) {
+
+        achievementsCount.textContent =
+            achievements.length;
+
+    }
+
+
+    // Projetos
+
+    if (projectsCount) {
+
+        projectsCount.textContent =
+            projects.length;
+
+    }
+
+
+    // Aniversariantes
+
+    if (birthdaysCount) {
+
+        birthdaysCount.textContent =
+            birthdays.length;
+
+    }
+
+
+    // =================================
+    // PROJETOS EM ANDAMENTO
+    // =================================
+
+    const inProgress =
+        projects.filter(
+            function (project) {
+
+                return (
+                    project.status ===
+                    "progress"
+                );
+
+            }
+        ).length;
+
+
+    if (projectsInProgress) {
+
+        projectsInProgress.textContent =
+            inProgress;
+
+    }
+
+
+    // =================================
+    // PROJETOS CONCLUÍDOS
+    // =================================
+
+    const completed =
+        projects.filter(
+            function (project) {
+
+                return (
+                    project.status ===
+                    "completed"
+                );
+
+            }
+        ).length;
+
+
+    if (projectsCompleted) {
+
+        projectsCompleted.textContent =
+            completed;
+
+    }
+
+}
+
+// =================================
 // NOTAS RECENTES
-// =============================
+// =================================
 
 function renderRecentNotes() {
+
+    if (!recentNotes) {
+        return;
+    }
+
 
     recentNotes.innerHTML = "";
 
@@ -123,7 +324,9 @@ function renderRecentNotes() {
 
             <div class="dashboard-empty">
 
-                <div>📝</div>
+                <div>
+                    📝
+                </div>
 
                 <p>
                     Nenhuma nota ainda.
@@ -134,76 +337,98 @@ function renderRecentNotes() {
         `;
 
         return;
+
     }
 
 
     const sortedNotes =
-        [...notes].sort(function (a, b) {
+        [...notes].sort(
+            function (a, b) {
 
-            const dateA =
-                new Date(
-                    a.updatedAt ||
-                    a.createdAt
-                );
+                const dateA =
+                    new Date(
+                        a.updated_at ||
+                        a.created_at ||
+                        0
+                    );
 
-            const dateB =
-                new Date(
-                    b.updatedAt ||
-                    b.createdAt
-                );
+                const dateB =
+                    new Date(
+                        b.updated_at ||
+                        b.created_at ||
+                        0
+                    );
 
-            return dateB - dateA;
+                return dateB - dateA;
 
-        });
+            }
+        );
 
 
     const latestNotes =
         sortedNotes.slice(0, 3);
 
 
-    latestNotes.forEach(function (note) {
+    latestNotes.forEach(
+        function (note) {
 
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "dashboard-note";
-
-
-        item.innerHTML = `
-
-            <div class="dashboard-note-icon">
-                📝
-            </div>
-
-            <div class="dashboard-note-info">
-
-                <strong>
-                    ${escapeHTML(note.title)}
-                </strong>
-
-                <span>
-                    ${escapeHTML(note.category)}
-                </span>
-
-            </div>
-
-        `;
+            const item =
+                document.createElement(
+                    "div"
+                );
 
 
-        recentNotes.appendChild(item);
+            item.className =
+                "dashboard-note";
 
-    });
+
+            item.innerHTML = `
+
+                <div class="dashboard-note-icon">
+                    📝
+                </div>
+
+                <div class="dashboard-note-info">
+
+                    <strong>
+                        ${escapeHTML(
+                            note.title
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeHTML(
+                            note.category
+                        )}
+                    </span>
+
+                </div>
+
+            `;
+
+
+            recentNotes.appendChild(
+                item
+            );
+
+        }
+    );
+
 }
 
-
-// =============================
+// =================================
 // CONQUISTAS RECENTES
-// =============================
+// =================================
 
 function renderRecentAchievements() {
 
-    recentAchievements.innerHTML = "";
+    if (!recentAchievements) {
+        return;
+    }
+
+
+    recentAchievements.innerHTML =
+        "";
 
 
     if (achievements.length === 0) {
@@ -212,7 +437,9 @@ function renderRecentAchievements() {
 
             <div class="dashboard-empty">
 
-                <div>🏆</div>
+                <div>
+                    🏆
+                </div>
 
                 <p>
                     Nenhuma conquista ainda.
@@ -223,6 +450,7 @@ function renderRecentAchievements() {
         `;
 
         return;
+
     }
 
 
@@ -232,14 +460,16 @@ function renderRecentAchievements() {
 
                 const dateA =
                     new Date(
-                        a.updatedAt ||
-                        a.createdAt
+                        a.updated_at ||
+                        a.created_at ||
+                        0
                     );
 
                 const dateB =
                     new Date(
-                        b.updatedAt ||
-                        b.createdAt
+                        b.updated_at ||
+                        b.created_at ||
+                        0
                     );
 
                 return dateB - dateA;
@@ -249,14 +479,19 @@ function renderRecentAchievements() {
 
 
     const latestAchievements =
-        sortedAchievements.slice(0, 3);
+        sortedAchievements.slice(
+            0,
+            3
+        );
 
 
     latestAchievements.forEach(
         function (achievement) {
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             item.className =
@@ -294,14 +529,19 @@ function renderRecentAchievements() {
 
         }
     );
+
 }
 
-
-// =============================
+// =================================
 // PROJETOS RECENTES
-// =============================
+// =================================
 
 function renderRecentProjects() {
+
+    if (!recentProjects) {
+        return;
+    }
+
 
     recentProjects.innerHTML = "";
 
@@ -312,7 +552,9 @@ function renderRecentProjects() {
 
             <div class="dashboard-empty">
 
-                <div>🚀</div>
+                <div>
+                    🚀
+                </div>
 
                 <p>
                     Nenhum projeto ainda.
@@ -323,6 +565,7 @@ function renderRecentProjects() {
         `;
 
         return;
+
     }
 
 
@@ -332,14 +575,16 @@ function renderRecentProjects() {
 
                 const dateA =
                     new Date(
-                        a.updatedAt ||
-                        a.createdAt
+                        a.updated_at ||
+                        a.created_at ||
+                        0
                     );
 
                 const dateB =
                     new Date(
-                        b.updatedAt ||
-                        b.createdAt
+                        b.updated_at ||
+                        b.created_at ||
+                        0
                     );
 
                 return dateB - dateA;
@@ -349,14 +594,19 @@ function renderRecentProjects() {
 
 
     const latestProjects =
-        sortedProjects.slice(0, 3);
+        sortedProjects.slice(
+            0,
+            3
+        );
 
 
     latestProjects.forEach(
         function (project) {
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             item.className =
@@ -370,7 +620,15 @@ function renderRecentProjects() {
 
 
             const progress =
-                Number(project.progress) || 0;
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        Number(
+                            project.progress
+                        ) || 0
+                    )
+                );
 
 
             item.innerHTML = `
@@ -418,28 +676,34 @@ function renderRecentProjects() {
             `;
 
 
-            recentProjects.appendChild(item);
+            recentProjects.appendChild(
+                item
+            );
 
         }
     );
+
 }
 
-
-// =============================
-// STATUS
-// =============================
+// =================================
+// STATUS DO PROJETO
+// =================================
 
 function getProjectStatus(status) {
 
     const statuses = {
 
-        planning: "📋 Planejamento",
+        planning:
+            "📋 Planejamento",
 
-        progress: "🟡 Em andamento",
+        progress:
+            "🟡 Em andamento",
 
-        completed: "🟢 Concluído",
+        completed:
+            "🟢 Concluído",
 
-        paused: "⏸️ Pausado"
+        paused:
+            "⏸️ Pausado"
 
     };
 
@@ -448,29 +712,18 @@ function getProjectStatus(status) {
         statuses[status] ||
         "📋 Planejamento"
     );
+
 }
 
-
-// =============================
-// INICIAR
-// =============================
-
-renderRecentNotes();
-
-renderRecentAchievements();
-
-renderRecentProjects();
-
-// =============================
-// ANIVERSARIANTES NO DASHBOARD
-// =============================
+// =================================
+// ANIVERSARIANTES
+// =================================
 
 function renderDashboardBirthdays() {
 
-    const birthdays =
-        NexusStorage.buscar(
-            "aniversariantes"
-        );
+    if (!dashboardBirthdays) {
+        return;
+    }
 
 
     if (birthdays.length === 0) {
@@ -503,17 +756,22 @@ function renderDashboardBirthdays() {
     }
 
 
-    // =============================
+    // =================================
     // ORDENAR POR PROXIMIDADE
-    // =============================
+    // =================================
 
     const sortedBirthdays =
         [...birthdays].sort(
             function (a, b) {
 
                 return (
-                    getDaysUntilBirthday(a.date) -
-                    getDaysUntilBirthday(b.date)
+                    getDaysUntilBirthday(
+                        a.date
+                    )
+                    -
+                    getDaysUntilBirthday(
+                        b.date
+                    )
                 );
 
             }
@@ -523,10 +781,14 @@ function renderDashboardBirthdays() {
     // Mostrar somente os 3 próximos
 
     const latestBirthdays =
-        sortedBirthdays.slice(0, 3);
+        sortedBirthdays.slice(
+            0,
+            3
+        );
 
 
-    dashboardBirthdays.innerHTML = "";
+    dashboardBirthdays.innerHTML =
+        "";
 
 
     latestBirthdays.forEach(
@@ -543,13 +805,15 @@ function renderDashboardBirthdays() {
 
             if (daysUntil === 0) {
 
-                status = "🎉 Hoje!";
+                status =
+                    "🎉 Hoje!";
 
             }
 
             else if (daysUntil === 1) {
 
-                status = "⏳ Amanhã!";
+                status =
+                    "⏳ Amanhã!";
 
             }
 
@@ -562,63 +826,64 @@ function renderDashboardBirthdays() {
 
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             item.className =
-    "dashboard-birthday";
+                "dashboard-birthday";
 
 
-// Destacar o próximo aniversário
+            // Destacar o próximo aniversário
 
-if (
-    birthday === latestBirthdays[0]
-) {
+            if (
+                birthday ===
+                latestBirthdays[0]
+            ) {
 
-    item.classList.add(
-        "next-birthday"
-    );
+                item.classList.add(
+                    "next-birthday"
+                );
 
-}
+            }
 
-                item.style.cursor = "pointer";
 
-item.addEventListener(
-    "click",
-    function () {
+            item.style.cursor =
+                "pointer";
 
-        window.location.href =
-            "./pages/aniversariantes.html";
 
-    }
-);
+            item.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "./pages/aniversariantes.html";
+
+                }
+            );
+
 
             item.innerHTML = `
 
                 <div class="dashboard-birthday-icon">
-
                     🎂
-
                 </div>
 
 
                 <div class="dashboard-birthday-info">
 
                     <strong>
-
                         ${escapeHTML(
                             birthday.name
                         )}
-
                     </strong>
 
 
                     <span>
-
                         ${formatBirthdayDate(
                             birthday.date
                         )}
-
                     </span>
 
                 </div>
@@ -642,12 +907,16 @@ item.addEventListener(
 
 }
 
-
-// =============================
+// =================================
 // DIAS ATÉ O ANIVERSÁRIO
-// =============================
+// =================================
 
 function getDaysUntilBirthday(date) {
+
+    if (!date) {
+        return 999999;
+    }
+
 
     const birthDate =
         new Date(
@@ -675,7 +944,10 @@ function getDaysUntilBirthday(date) {
         );
 
 
-    if (nextBirthday < today) {
+    if (
+        nextBirthday <
+        today
+    ) {
 
         nextBirthday =
             new Date(
@@ -699,12 +971,16 @@ function getDaysUntilBirthday(date) {
 
 }
 
-
-// =============================
-// FORMATAR DATA
-// =============================
+// =================================
+// FORMATAR DATA DO ANIVERSÁRIO
+// =================================
 
 function formatBirthdayDate(date) {
+
+    if (!date) {
+        return "";
+    }
+
 
     const birthDate =
         new Date(
@@ -722,28 +998,8 @@ function formatBirthdayDate(date) {
 
 }
 
+// =================================
+// INICIAR DASHBOARD
+// =================================
 
-// =============================
-// SEGURANÇA
-// =============================
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-
-    div.textContent =
-        text || "";
-
-
-    return div.innerHTML;
-
-}
-
-
-// =============================
-// INICIAR ANIVERSARIANTES
-// =============================
-
-renderDashboardBirthdays();
+loadDashboardData();
